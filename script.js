@@ -616,7 +616,6 @@ function renderBikeList() {
     });
 
     const deleteBtn = iconBtn("Smazat", "×", () => {
-      if (!window.confirm(`Smazat kolo „${bike.name}“?`)) return;
       bikes = bikes.filter((b) => b.id !== bike.id);
       if (activeId === bike.id) activeId = bikes[0] ? bikes[0].id : null;
       commitBikeSwitch();
