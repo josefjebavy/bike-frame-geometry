@@ -210,7 +210,9 @@ dd { margin: 0; font-weight: 600; text-align: right; }
 .tube-fork { stroke: var(--fork); stroke-width: 5; fill: none; stroke-linecap: round; }
 .tube-stay { stroke: var(--stay); stroke-width: 4; fill: none; stroke-linecap: round; }
 .tube-cockpit { stroke: var(--cockpit); stroke-width: 4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
-.saddle-line { stroke: var(--saddle); stroke-width: 9; stroke-linecap: round; }
+.bar-ring { fill: none; stroke: var(--cockpit); stroke-width: 3; }
+.saddle-line { stroke: var(--saddle); stroke-width: 6; stroke-linecap: round; }
+.seatpost { stroke: var(--tube-seat); stroke-width: 3.5; stroke-linecap: round; }
 
 .dim-line { stroke: var(--dim); stroke-width: 1; }
 .dim-label {

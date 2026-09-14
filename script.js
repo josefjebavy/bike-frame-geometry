@@ -12,7 +12,6 @@ const inputs = {
   wheelDia: document.getElementById("wheelDia"),
   headAngle: document.getElementById("headAngle"),
   headTubeLen: document.getElementById("headTubeLen"),
-  forkLength: document.getElementById("forkLength"),
   forkRake: document.getElementById("forkRake"),
   stemLength: document.getElementById("stemLength"),
   stemAngle: document.getElementById("stemAngle"),
@@ -23,6 +22,7 @@ const inputs = {
 const outSeatAngle = document.getElementById("out-seat-angle");
 const outInfo = document.getElementById("out-info");
 const outWheelbase = document.getElementById("out-wheelbase");
+const outForkLength = document.getElementById("out-fork-length");
 
 form.addEventListener("input", render);
 
@@ -74,15 +74,21 @@ function computeGeometry(v) {
   };
 
   // Front axle: extend the steering axis, then offset by fork rake.
-  const axisLen = Math.sqrt(Math.max(v.forkLength * v.forkLength - v.forkRake * v.forkRake, 0));
+  // The axis length isn't a free input — both wheels share one diameter,
+  // so the fork must be exactly long enough to put the front axle at the
+  // same height as the rear axle (bbDrop above BB), given head angle,
+  // head tube length and rake. Solving for that keeps the wheels level
+  // instead of letting an independently-typed fork length float them apart.
   const forkPerp = { x: Math.sin(headRad), y: Math.cos(headRad) };
+  const axisLen = (v.bbDrop - headBottom.y - v.forkRake * forkPerp.y) / headDir.y;
   const frontAxle = {
     x: headBottom.x + axisLen * headDir.x + v.forkRake * forkPerp.x,
-    y: headBottom.y + axisLen * headDir.y + v.forkRake * forkPerp.y,
+    y: v.bbDrop,
   };
+  const forkLength = Math.hypot(axisLen, v.forkRake);
 
   const wheelRadius = v.wheelDia / 2;
-  const groundY = (rearAxle.y - wheelRadius + (frontAxle.y - wheelRadius)) / 2;
+  const groundY = rearAxle.y - wheelRadius;
 
   // Stem, from the head tube top.
   const stemRad = (v.stemAngle * Math.PI) / 180;
@@ -91,13 +97,8 @@ function computeGeometry(v) {
     y: headTop.y + v.stemLength * Math.sin(stemRad),
   };
 
-  // Handlebar: a simple drop-bar silhouette, fixed proportions (decorative).
-  const barRise = 25;
-  const barReach = 70;
-  const barDrop = 90;
-  const barClamp = { x: stemEnd.x, y: stemEnd.y + barRise };
-  const barTop = { x: barClamp.x + barReach, y: barClamp.y };
-  const barDropPt = { x: barTop.x, y: barTop.y - barDrop };
+  // Handlebar: just a ring (bar seen end-on), centered on the stem end.
+  const barEnd = { x: stemEnd.x, y: stemEnd.y };
 
   // Saddle, along the seat tube centerline extended, then set back.
   const saddleBase = {
@@ -120,11 +121,11 @@ function computeGeometry(v) {
     wheelRadius,
     groundY,
     stemEnd,
-    barClamp,
-    barTop,
-    barDropPt,
+    barEnd,
+    saddleBase,
     saddleCenter,
     wheelbase,
+    forkLength,
   };
 }
 
@@ -229,7 +230,6 @@ function render() {
     wheelDia: parseFloat(inputs.wheelDia.value) || 1,
     headAngle: parseFloat(inputs.headAngle.value) || 73,
     headTubeLen: parseFloat(inputs.headTubeLen.value) || 0,
-    forkLength: parseFloat(inputs.forkLength.value) || 1,
     forkRake: parseFloat(inputs.forkRake.value) || 0,
     stemLength: parseFloat(inputs.stemLength.value) || 0,
     stemAngle: parseFloat(inputs.stemAngle.value) || 0,
@@ -247,9 +247,8 @@ function render() {
     geo.ettPoint,
     geo.headBottom,
     geo.stemEnd,
-    geo.barClamp,
-    geo.barTop,
-    geo.barDropPt,
+    geo.barEnd,
+    geo.saddleBase,
     { x: geo.saddleCenter.x - 70, y: geo.saddleCenter.y },
     { x: geo.saddleCenter.x + 70, y: geo.saddleCenter.y },
     ...circleBounds(geo.rearAxle, geo.wheelRadius),
@@ -267,9 +266,8 @@ function render() {
   const frontAxlePx = px(geo.frontAxle);
   const headBottomPx = px(geo.headBottom);
   const stemEndPx = px(geo.stemEnd);
-  const barClampPx = px(geo.barClamp);
-  const barTopPx = px(geo.barTop);
-  const barDropPx = px(geo.barDropPt);
+  const barEndPx = px(geo.barEnd);
+  const saddleBasePx = px(geo.saddleBase);
   const saddleCenterPx = px(geo.saddleCenter);
   const wheelRPx = geo.wheelRadius * proj.scale;
 
@@ -307,18 +305,20 @@ function render() {
   svg.appendChild(el("line", { class: "tube tube-top", x1: headPx.x, y1: headPx.y, x2: seatTopPx.x, y2: seatTopPx.y }));
   svg.appendChild(el("line", { class: "tube tube-seat", x1: bbPx.x, y1: bbPx.y, x2: seatTopPx.x, y2: seatTopPx.y }));
 
-  // Stem + handlebar
+  // Stem + handlebar (ring only, bar seen end-on)
   svg.appendChild(el("line", { class: "tube-cockpit", x1: headPx.x, y1: headPx.y, x2: stemEndPx.x, y2: stemEndPx.y }));
-  const barPoints = [stemEndPx, barClampPx, barTopPx, barDropPx].map((p) => `${p.x},${p.y}`).join(" ");
-  svg.appendChild(el("polyline", { class: "tube-cockpit", points: barPoints }));
+  svg.appendChild(el("circle", { class: "bar-ring", cx: barEndPx.x, cy: barEndPx.y, r: 9 }));
+
+  // Seatpost (frame seat tube top -> saddle)
+  svg.appendChild(el("line", { class: "seatpost", x1: seatTopPx.x, y1: seatTopPx.y, x2: saddleBasePx.x, y2: saddleBasePx.y }));
 
   // Saddle
   svg.appendChild(
     el("line", {
       class: "saddle-line",
-      x1: saddleCenterPx.x - 60,
+      x1: saddleCenterPx.x - 32,
       y1: saddleCenterPx.y,
-      x2: saddleCenterPx.x + 60,
+      x2: saddleCenterPx.x + 32,
       y2: saddleCenterPx.y,
     })
   );
@@ -335,7 +335,7 @@ function render() {
   svg.appendChild(label(rearAxlePx.x, rearAxlePx.y + wheelRPx + 16, "Zadní kolo", "middle"));
   svg.appendChild(label(frontAxlePx.x, frontAxlePx.y + wheelRPx + 16, "Přední kolo", "middle"));
   svg.appendChild(label(saddleCenterPx.x, saddleCenterPx.y - 12, "Sedlo", "middle"));
-  svg.appendChild(label(barTopPx.x + 8, barTopPx.y - 6, "Řídítka"));
+  svg.appendChild(label(barEndPx.x + 12, barEndPx.y - 6, "Řídítka"));
 
   // Dimension lines (primary 4 inputs)
   const dimGroup = el("g");
@@ -360,6 +360,7 @@ function render() {
   const frontLen = Math.hypot(geo.headTop.x - geo.bb.x, geo.headTop.y - geo.bb.y);
   outInfo.textContent = `${frontLen.toFixed(0)} mm`;
   outWheelbase.textContent = `${geo.wheelbase.toFixed(0)} mm`;
+  outForkLength.textContent = `${geo.forkLength.toFixed(0)} mm`;
 }
 
 render();

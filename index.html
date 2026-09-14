@@ -46,8 +46,8 @@
                 <input type="number" id="bbDrop" step="1" value="70">
               </label>
               <label>
-                Průměr kol (mm)
-                <input type="number" id="wheelDia" step="1" value="700">
+                Průměr kol (mm, 29″ ≈ 737 mm)
+                <input type="number" id="wheelDia" step="1" value="737">
               </label>
               <label>
                 Úhel hlavové trubky (°)
@@ -56,10 +56,6 @@
               <label>
                 Délka hlavové trubky (mm)
                 <input type="number" id="headTubeLen" step="1" value="150">
-              </label>
-              <label>
-                Délka vidlice, osa–koruna (mm)
-                <input type="number" id="forkLength" step="1" value="368">
               </label>
               <label>
                 Offset (rake) vidlice (mm)
@@ -71,11 +67,11 @@
               </label>
               <label>
                 Úhel představce (°, + nahoru)
-                <input type="number" id="stemAngle" step="1" value="-7">
+                <input type="number" id="stemAngle" step="1" value="7">
               </label>
               <label>
                 Výška sedla nad rámem (mm)
-                <input type="number" id="saddleHeight" step="1" value="100">
+                <input type="number" id="saddleHeight" step="1" value="240">
               </label>
               <label>
                 Posun sedla dozadu (mm)
@@ -94,14 +90,17 @@
             <dd id="out-info">–</dd>
             <dt>Rozvor (wheelbase)</dt>
             <dd id="out-wheelbase">–</dd>
+            <dt>Délka vidlice, osa–koruna (dopočtená)</dt>
+            <dd id="out-fork-length">–</dd>
           </dl>
           <p class="note">
             Sedlová trubka je vedena z BB přes bod, kde ji ve výšce
             stacku protíná effective top tube; úhel sedlovky je z toho
             dopočítán, ne zadáván. Kola, vidlice, představec, řídítka
             a sedlo jsou orientační silueta z doplňkových rozměrů —
-            nejsou odvozené z hlavních 4 hodnot, takže u výchozích čísel
-            se kola mohou o pár mm lišit od společné zemní linky.
+            nejsou odvozené z hlavních 4 hodnot. Délka vidlice se dopočítává
+            tak, aby přední i zadní kolo (stejný průměr) stála na stejné
+            zemní lince.
           </p>
         </div>
       </section>
