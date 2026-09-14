@@ -30,7 +30,7 @@ const DEFAULTS = {
   chainstay: 410, bbDrop: 70, wheelDia: 737,
   headAngle: 73, headTubeLen: 150, forkRake: 45,
   stemLength: 100, stemAngle: 7,
-  saddleHeight: 240, saddleSetback: 20,
+  saddleHeight: 760, saddleSetback: 20,
 };
 
 const GHOST_PALETTE = ["#b3441f", "#3f6b4d", "#35577d", "#8a5a2b", "#6a4c93", "#a44a74"];
@@ -147,11 +147,10 @@ function computeGeometry(v) {
   // Handlebar: just a ring (bar seen end-on), centered on the stem end.
   const barEnd = { x: stemEnd.x, y: stemEnd.y };
 
-  // Saddle, along the seat tube centerline extended, then set back.
-  const saddleBase = {
-    x: seatTop.x + seatDirX * v.saddleHeight,
-    y: seatTop.y + seatDirY * v.saddleHeight,
-  };
+  // Saddle: `saddleHeight` is the straight-line distance from BB along the
+  // seat tube centerline (same measure as `seatTube`, just further out to
+  // the saddle) — i.e. saddle height from the BB, not from the frame.
+  const saddleBase = { x: seatDirX * v.saddleHeight, y: seatDirY * v.saddleHeight };
   const saddleCenter = { x: saddleBase.x - v.saddleSetback, y: saddleBase.y };
 
   const wheelbase = frontAxle.x - rearAxle.x;

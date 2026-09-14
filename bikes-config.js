@@ -350,8 +350,8 @@ window.BIKE_GROUPS = [
       // Reach: the trig estimate from stack/ett/beta (≈424.1) was wrong per
       // the user — corrected using the "Geometrie posedu" chart instead,
       // where stem length (130mm) + frame reach = 531mm (BB-to-bar-clamp
-      // horizontal), so reach = 531 - 130 = 401. saddleHeight=280 is that
-      // same chart's BB-to-saddle (840) minus seatTube (560).
+      // horizontal), so reach = 531 - 130 = 401. saddleHeight=840 is that
+      // same chart's BB-to-saddle distance, read directly.
       {
         "brand": "Duratec",
         "velikost": "XXL",
@@ -366,7 +366,7 @@ window.BIKE_GROUPS = [
           "wheelDia": 737,
           "headAngle": 71.5,
           "headTubeLen": 175,
-          "saddleHeight": 280
+          "saddleHeight": 840
         }
       }
     ]
