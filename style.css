@@ -122,6 +122,12 @@ input[type="number"]:disabled {
   cursor: not-allowed;
 }
 
+input[type="number"]:read-only {
+  opacity: 0.6;
+  cursor: default;
+  background: var(--panel-bg);
+}
+
 .field-with-action {
   display: flex;
   gap: 6px;
@@ -292,6 +298,10 @@ dd { margin: 0; font-weight: 600; text-align: right; }
   padding: 2px 0;
 }
 
+.data-file-bike-row[hidden] {
+  display: none;
+}
+
 .data-file-bike-name {
   display: block;
   width: 100%;
@@ -407,6 +417,18 @@ dd { margin: 0; font-weight: 600; text-align: right; }
   display: flex;
 }
 
+.align-hint {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.align-hint strong { color: var(--text); }
+
 #frame-svg {
   width: 100%;
   height: auto;
@@ -423,7 +445,9 @@ dd { margin: 0; font-weight: 600; text-align: right; }
 .tube-down { stroke: var(--tube-down); stroke-width: 6; }
 .tube-ett { stroke: var(--dim); stroke-width: 1.5; stroke-dasharray: 4 4; }
 
-.joint { fill: var(--panel-bg); stroke: var(--tube); stroke-width: 2; }
+.joint { fill: var(--panel-bg); stroke: var(--tube); stroke-width: 2; cursor: pointer; }
+.joint:hover { stroke: var(--accent); stroke-width: 3; }
+.joint-align { fill: var(--accent); stroke: var(--accent); }
 
 .wheel { fill: none; stroke: var(--wheel); stroke-width: 3; }
 .hub { fill: var(--wheel); }
@@ -431,7 +455,10 @@ dd { margin: 0; font-weight: 600; text-align: right; }
 .tube-fork { stroke: var(--fork); stroke-width: 5; fill: none; stroke-linecap: round; }
 .tube-stay { stroke: var(--stay); stroke-width: 4; fill: none; stroke-linecap: round; }
 .tube-cockpit { stroke: var(--cockpit); stroke-width: 4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
-.bar-ring { fill: none; stroke: var(--cockpit); stroke-width: 3; }
+.tube-spacers { stroke: var(--cockpit); stroke-width: 6; stroke-dasharray: 2 2; fill: none; stroke-linecap: butt; opacity: 0.7; }
+.bar-ring { fill: none; stroke: var(--cockpit); stroke-width: 3; cursor: pointer; }
+.bar-ring:hover { stroke: var(--accent); stroke-width: 4; }
+.bar-ring-align { stroke: var(--accent); stroke-width: 4; }
 .saddle-line { stroke: var(--saddle); stroke-width: 6; stroke-linecap: round; }
 .seatpost { stroke: var(--tube-seat); stroke-width: 3.5; stroke-linecap: round; }
 

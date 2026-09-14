@@ -20,7 +20,8 @@ window.BIKE_GROUPS = [
           "bbDrop": 65,
           "wheelDia": 737,
           "headAngle": 68.5,
-          "headTubeLen": 141.8
+          "headTubeLen": 141.8,
+          "spacerHeight": 20
         }
       },
       {
@@ -36,7 +37,8 @@ window.BIKE_GROUPS = [
           "chainstay": 430,
           "bbDrop": 70,
           "headAngle": 69.5,
-          "headTubeLen": 120
+          "headTubeLen": 120,
+          "spacerHeight": 20
         }
       },
       {
@@ -53,6 +55,7 @@ window.BIKE_GROUPS = [
           "bbDrop": 62,
           "headAngle": 68,
           "headTubeLen": 110,
+          "spacerHeight": 20,
           "forkRake": 44
         }
       },
@@ -70,7 +73,8 @@ window.BIKE_GROUPS = [
           "bbDrop": 65,
           "wheelDia": 737,
           "headAngle": 68,
-          "headTubeLen": 115
+          "headTubeLen": 115,
+          "spacerHeight": 20
         }
       },
       {
@@ -87,6 +91,7 @@ window.BIKE_GROUPS = [
           "bbDrop": 63.5,
           "headAngle": 71,
           "headTubeLen": 150,
+          "spacerHeight": 20,
           "stemLength": 90
         }
       },
@@ -104,6 +109,7 @@ window.BIKE_GROUPS = [
           "bbDrop": 57.5,
           "headAngle": 69.8,
           "headTubeLen": 125,
+          "spacerHeight": 20,
           "forkRake": 51
         }
       },
@@ -122,6 +128,7 @@ window.BIKE_GROUPS = [
           "wheelDia": 737,
           "headAngle": 68.5,
           "headTubeLen": 120,
+          "spacerHeight": 20,
           "forkRake": 48,
           "stemLength": 70
         }
@@ -140,6 +147,7 @@ window.BIKE_GROUPS = [
           "bbDrop": 57,
           "headAngle": 66.5,
           "headTubeLen": 115,
+          "spacerHeight": 20,
           "stemLength": 80
         }
       },
@@ -157,7 +165,8 @@ window.BIKE_GROUPS = [
           "bbDrop": 55,
           "wheelDia": 737,
           "headAngle": 69,
-          "headTubeLen": 120
+          "headTubeLen": 120,
+          "spacerHeight": 20
         }
       },
       {
@@ -174,6 +183,7 @@ window.BIKE_GROUPS = [
           "bbDrop": 60,
           "headAngle": 67.4,
           "headTubeLen": 120,
+          "spacerHeight": 20,
           "stemLength": 80
         }
       },
@@ -192,6 +202,7 @@ window.BIKE_GROUPS = [
           "wheelDia": 737,
           "headAngle": 67,
           "headTubeLen": 120,
+          "spacerHeight": 20,
           "forkRake": 43
         }
       },
@@ -210,6 +221,7 @@ window.BIKE_GROUPS = [
           "wheelDia": 737,
           "headAngle": 66.5,
           "headTubeLen": 135,
+          "spacerHeight": 20,
           "forkRake": 46
         }
       },
@@ -226,7 +238,86 @@ window.BIKE_GROUPS = [
           "chainstay": 435,
           "bbDrop": 65,
           "headAngle": 66,
-          "headTubeLen": 145
+          "headTubeLen": 145,
+          "spacerHeight": 20
+        }
+      },
+      {
+        "brand": "Lapierre",
+        "velikost": "XL",
+        "typ": "mtb",
+        "name": "Lapierre Prorace 4.9 (XL)",
+        "values": {
+          "reach": 480,
+          "stack": 616,
+          "ett": 657,
+          "seatTube": 510,
+          "chainstay": 425,
+          "bbDrop": 62,
+          "headAngle": 68,
+          "headTubeLen": 110,
+          "spacerHeight": 20
+        }
+      },
+      // Source: frame/new/Rock Machine Blizz 50 ... .webp — manufacturer's own
+      // table lists "úhel sedlové trubky" (seat tube angle) = 67° and "úhel
+      // hlavové trubky" (head tube angle) = 74°. Those two are almost
+      // certainly swapped in the source table (74° head angle / 67° seat
+      // angle would be reversed of every other hardtail here) — using
+      // headAngle=67 to match typical geometry.
+      {
+        "brand": "Rock Machine",
+        "velikost": "XL",
+        "typ": "mtb",
+        "name": "Rock Machine Blizz 50 (XL, 29\")",
+        "values": {
+          "reach": 483,
+          "stack": 652,
+          "ett": 670,
+          "seatTube": 533,
+          "chainstay": 443,
+          "bbDrop": 53,
+          "wheelDia": 737,
+          "headAngle": 67,
+          "headTubeLen": 140,
+          "spacerHeight": 20,
+          "stemLength": 45
+        }
+      },
+      {
+        "brand": "Pells",
+        "velikost": "XL",
+        "typ": "mtb",
+        "name": "Pells Duke Elite 9 (XL, 29\")",
+        "values": {
+          "reach": 475,
+          "stack": 625,
+          "ett": 655,
+          "seatTube": 530,
+          "chainstay": 425,
+          "bbDrop": 51,
+          "wheelDia": 737,
+          "headAngle": 69.5,
+          "headTubeLen": 125,
+          "spacerHeight": 20
+        }
+      },
+      {
+        "brand": "Pells",
+        "velikost": "XL",
+        "typ": "mtb",
+        "name": "Pells Duke 2 (XL, 29\")",
+        "values": {
+          "reach": 481,
+          "stack": 631,
+          "ett": 651,
+          "seatTube": 520,
+          "chainstay": 430,
+          "bbDrop": 60,
+          "wheelDia": 737,
+          "headAngle": 69,
+          "headTubeLen": 125,
+          "spacerHeight": 20
         }
       }
     ]
@@ -248,7 +339,8 @@ window.BIKE_GROUPS = [
           "bbDrop": 65,
           "wheelDia": 737,
           "headAngle": 68.5,
-          "headTubeLen": 156.8
+          "headTubeLen": 156.8,
+          "spacerHeight": 20
         }
       },
       {
@@ -265,7 +357,8 @@ window.BIKE_GROUPS = [
           "bbDrop": 65,
           "wheelDia": 737,
           "headAngle": 68,
-          "headTubeLen": 125
+          "headTubeLen": 125,
+          "spacerHeight": 20
         }
       },
       {
@@ -282,6 +375,7 @@ window.BIKE_GROUPS = [
           "bbDrop": 57.5,
           "headAngle": 69.8,
           "headTubeLen": 125,
+          "spacerHeight": 20,
           "forkRake": 51
         }
       },
@@ -300,6 +394,7 @@ window.BIKE_GROUPS = [
           "wheelDia": 737,
           "headAngle": 68.5,
           "headTubeLen": 135,
+          "spacerHeight": 20,
           "forkRake": 48,
           "stemLength": 70
         }
@@ -318,6 +413,7 @@ window.BIKE_GROUPS = [
           "bbDrop": 60,
           "headAngle": 67.4,
           "headTubeLen": 120,
+          "spacerHeight": 20,
           "stemLength": 80
         }
       },
@@ -336,30 +432,46 @@ window.BIKE_GROUPS = [
           "wheelDia": 737,
           "headAngle": 66.5,
           "headTubeLen": 150,
+          "spacerHeight": 20,
           "forkRake": 46
         }
       },
       // Source: data2/mtb-DUR_11-03-017_torain_Jebavý.pdf — custom-fit frame
       // (Duratec "Frame with Optimized Geometry", mtb komfortní), rám pro 29"
-      // kola. Diagram gives I=stack, A1=ett (confirmed with the user — the
-      // higher horizontal bracket, at head-tube-top height; A2=614 is a
-      // different/lower reference, not used), B2=seatTube, C1=chainstay,
-      // F=headTubeLen, alfa=headAngle, beta=seat tube angle. No BB drop or
-      // fork rake on this chart.
+      // kola. Diagram gives I=stack, A1=ett (the higher horizontal bracket,
+      // at head-tube-top height), A2=614 (the real/sloped top-tube length,
+      // confirmed by the user against this app's computed value — see
+      // below), B2=seatTube, C1=chainstay, F=headTubeLen, alfa=headAngle,
+      // beta=seat tube angle. No BB drop or fork rake on this chart.
       //
-      // Reach: the trig estimate from stack/ett/beta (≈424.1) was wrong per
-      // the user — corrected using the "Geometrie posedu" chart instead,
-      // where stem length (130mm) + frame reach = 531mm (BB-to-bar-clamp
-      // horizontal), so reach = 531 - 130 = 401. saddleHeight=840 is that
-      // same chart's BB-to-saddle distance, read directly. stemLength=130
-      // is that same stem, now also stored as its own field.
+      // Reach: derived from A1/I/beta (reach = ett - stack/tan(beta) =
+      // 645 - 684/tan(72.1°) ≈ 424), which reproduces A2=614 as this app's
+      // computed real top-tube length (headTop-to-seatTop distance) to
+      // within ~1mm rounding. A prior session had instead computed reach
+      // from the PDF's separate "Geometrie posedu" (fit) chart — stem
+      // length (130mm) + frame reach = 531mm horizontal, so reach = 401 —
+      // but that subtracted the full 130mm stem as if horizontal, when the
+      // diagram shows the stem at ~84° from the head tube itself (not from
+      // horizontal). That reach (401) was wrong; 424 is the value
+      // consistent with the frame diagram itself.
+      // saddleHeight=840 is still that same posedu chart's direct
+      // BB-to-saddle reading (not affected by the stem-angle mistake).
+      // stemLength=130 is that same stem's length, close enough to its
+      // horizontal reach (~127mm at 84° off the head tube) for this
+      // app's model, where the stem's vertical rise is now the fixed
+      // STEM_HEIGHT constant (script.js) rather than a per-bike angle.
+      //
+      // spacerHeight=40: set directly by the user (overriding the app-wide
+      // 20mm default and an earlier 50.9mm derived from a saddle/bar-height
+      // constraint — stack + spacerHeight(vertical) + STEM_HEIGHT + 27 =
+      // saddle's true vertical height above BB).
       {
         "brand": "Duratec",
         "velikost": "XXL",
         "typ": "mtb",
         "name": "Duratec Torain C1 (custom, 29\")",
         "values": {
-          "reach": 401,
+          "reach": 424,
           "stack": 684,
           "ett": 645,
           "seatTube": 560,
@@ -367,6 +479,7 @@ window.BIKE_GROUPS = [
           "wheelDia": 737,
           "headAngle": 71.5,
           "headTubeLen": 175,
+          "spacerHeight": 40,
           "saddleHeight": 840,
           "stemLength": 130
         }
@@ -390,7 +503,8 @@ window.BIKE_GROUPS = [
           "bbDrop": 73,
           "wheelDia": 700,
           "headAngle": 73.5,
-          "headTubeLen": 188
+          "headTubeLen": 188,
+          "spacerHeight": 20
         }
       }
     ]
@@ -412,7 +526,8 @@ window.BIKE_GROUPS = [
           "bbDrop": 73,
           "wheelDia": 700,
           "headAngle": 73.8,
-          "headTubeLen": 206
+          "headTubeLen": 206,
+          "spacerHeight": 20
         }
       },
       // Source: data2/sinickaDUR_17-10-004_COOL R14_Jebavý.pdf — custom-fit
@@ -437,6 +552,7 @@ window.BIKE_GROUPS = [
           "wheelDia": 700,
           "headAngle": 72.5,
           "headTubeLen": 156,
+          "spacerHeight": 20,
           "forkRake": 45
         }
       }

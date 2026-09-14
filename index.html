@@ -17,6 +17,21 @@
       <section class="panel bikes-panel">
         <h2>Kola</h2>
         <ul id="bike-list" class="bike-list"></ul>
+      </section>
+
+      <section class="canvas-wrap">
+        <svg id="frame-svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid meet"></svg>
+      </section>
+
+      <p class="align-hint">
+        Kola jsou zarovnaná podle bodu: <strong id="align-hint-label">BB</strong> —
+        klikni na kterýkoli z bodů na aktivním rámu (BB, hlavová trubka,
+        vršek sedlovky, spodek hlavové trubky, řídítka), podle kterého se
+        mají všechna kola srovnat.
+        <button type="button" id="align-reset" class="btn-mini" disabled>Zpět na BB</button>
+      </p>
+
+      <section class="panel bikes-import-panel">
         <div class="bike-actions-row">
           <button type="button" id="add-bike" class="btn-secondary">+ Přidat kolo</button>
           <button type="button" id="export-bikes" class="btn-secondary">Export JSON</button>
@@ -41,10 +56,6 @@
         </p>
       </section>
 
-      <section class="canvas-wrap">
-        <svg id="frame-svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid meet"></svg>
-      </section>
-
       <section class="panel">
         <h2>Rozměry (aktivní kolo)</h2>
         <form id="geo-form">
@@ -59,6 +70,10 @@
           <label>
             Effective Top Tube (mm)
             <input type="number" id="ett" step="1" value="565">
+          </label>
+          <label>
+            Skutečná délka horní trubky (mm, dopočtená ze sklonu)
+            <input type="number" id="topTubeReal" step="1" readonly tabindex="-1">
           </label>
           <label>
             Délka sedlové trubky (mm, BB–horní hrana)
@@ -93,12 +108,16 @@
                 <input type="number" id="forkRake" step="1" value="45">
               </label>
               <label>
-                Délka představce (mm)
+                Podložky pod představcem (mm, podél sloupku vidlice)
+                <input type="number" id="spacerHeight" step="1" value="20">
+              </label>
+              <label>
+                Délka představce (mm, vodorovný dosah)
                 <input type="number" id="stemLength" step="1" value="100">
               </label>
               <label>
-                Úhel představce (°, + nahoru)
-                <input type="number" id="stemAngle" step="1" value="7">
+                Výška představce (mm, pevná hodnota)
+                <input type="number" id="stemHeight" step="1" readonly tabindex="-1">
               </label>
               <label>
                 Výška sedla od středového složení (mm)
@@ -109,7 +128,7 @@
               </label>
               <label>
                 Posun sedla dozadu (mm)
-                <input type="number" id="saddleSetback" step="1" value="20">
+                <input type="number" id="saddleSetback" step="1" value="0">
               </label>
             </div>
           </details>

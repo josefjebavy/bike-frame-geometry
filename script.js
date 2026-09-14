@@ -18,12 +18,16 @@ const resetBikesBtn = document.getElementById("reset-bikes");
 const exportBikesBtn = document.getElementById("export-bikes");
 const importBikesInput = document.getElementById("import-bikes");
 const saddleHeightApplyAllBtn = document.getElementById("saddle-height-apply-all");
+const topTubeRealInput = document.getElementById("topTubeReal");
+const stemHeightInput = document.getElementById("stemHeight");
+const alignHintLabelEl = document.getElementById("align-hint-label");
+const alignResetBtn = document.getElementById("align-reset");
 
 const FIELD_KEYS = [
   "reach", "stack", "ett", "seatTube",
   "chainstay", "bbDrop", "wheelDia",
   "headAngle", "headTubeLen", "forkRake",
-  "stemLength", "stemAngle",
+  "spacerHeight", "stemLength",
   "saddleHeight", "saddleSetback",
 ];
 
@@ -31,9 +35,14 @@ const DEFAULTS = {
   reach: 385, stack: 585, ett: 565, seatTube: 520,
   chainstay: 410, bbDrop: 70, wheelDia: 737,
   headAngle: 73, headTubeLen: 150, forkRake: 45,
-  stemLength: 100, stemAngle: 7,
-  saddleHeight: 760, saddleSetback: 20,
+  spacerHeight: 20, stemLength: 100,
+  saddleHeight: 760, saddleSetback: 0,
 };
+
+// Fixed stem height (vertical rise from the steerer/spacer top to the bar
+// clamp), per the user — not a per-bike input, always this constant.
+const STEM_HEIGHT = 40;
+stemHeightInput.value = STEM_HEIGHT;
 
 const GHOST_PALETTE = ["#b3441f", "#3f6b4d", "#35577d", "#8a5a2b", "#6a4c93", "#a44a74"];
 const STORAGE_KEY = "bike-frame-geometry:bikes:v1";
@@ -42,6 +51,45 @@ const inputs = Object.fromEntries(FIELD_KEYS.map((k) => [k, document.getElementB
 
 let bikes = [];
 let activeId = null;
+
+// Which point every bike's frame gets aligned on when drawn together. Click
+// one of the 4 joint dots on the active frame to change it — every bike's
+// geometry is then re-based so that point sits at the same spot (instead of
+// always comparing from BB).
+const ALIGN_POINTS = {
+  bb: "BB",
+  headTop: "Hlavová trubka",
+  seatTop: "Vršek sedlovky",
+  headBottom: "Spodek hlavové trubky",
+  barEnd: "Řídítka",
+};
+let alignPoint = "bb";
+
+// Re-bases every point in `geo` so that `geo[refKey]` becomes (0, 0) — the
+// scalar-valued fields (angles, lengths) are translation-invariant and pass
+// through unchanged; `groundY` is a y-only scalar so it shifts with dy.
+function alignGeo(geo, refKey) {
+  const ref = geo[refKey] || geo.bb;
+  const dx = -ref.x;
+  const dy = -ref.y;
+  const shift = (p) => ({ x: p.x + dx, y: p.y + dy });
+  return {
+    ...geo,
+    bb: shift(geo.bb),
+    headTop: shift(geo.headTop),
+    ettPoint: shift(geo.ettPoint),
+    seatTop: shift(geo.seatTop),
+    rearAxle: shift(geo.rearAxle),
+    headBottom: shift(geo.headBottom),
+    frontAxle: shift(geo.frontAxle),
+    steererTop: shift(geo.steererTop),
+    stemEnd: shift(geo.stemEnd),
+    barEnd: shift(geo.barEnd),
+    saddleBase: shift(geo.saddleBase),
+    saddleCenter: shift(geo.saddleCenter),
+    groundY: geo.groundY + dy,
+  };
+}
 
 function el(tag, attrs = {}) {
   const node = document.createElementNS(SVG_NS, tag);
@@ -139,11 +187,22 @@ function computeGeometry(v) {
   const wheelRadius = v.wheelDia / 2;
   const groundY = rearAxle.y - wheelRadius;
 
-  // Stem, from the head tube top.
-  const stemRad = (v.stemAngle * Math.PI) / 180;
+  // Headset spacers: stacked on the steerer above the head tube top, so
+  // they continue the *steerer axis* (same line as the head tube, just
+  // extended upward-and-back), not a vertical line. The stem then starts
+  // from the top of that stack instead of straight off the frame.
+  const steererUpDir = { x: -headDir.x, y: -headDir.y };
+  const steererTop = {
+    x: headTop.x + v.spacerHeight * steererUpDir.x,
+    y: headTop.y + v.spacerHeight * steererUpDir.y,
+  };
+
+  // Stem, from the top of the spacer stack (== head tube top when there
+  // are no spacers). `stemLength` is its horizontal reach; its vertical
+  // rise is the fixed STEM_HEIGHT constant, not a per-bike input.
   const stemEnd = {
-    x: headTop.x + v.stemLength * Math.cos(stemRad),
-    y: headTop.y + v.stemLength * Math.sin(stemRad),
+    x: steererTop.x + v.stemLength,
+    y: steererTop.y + STEM_HEIGHT,
   };
 
   // Handlebar: just a ring (bar seen end-on), centered on the stem end.
@@ -172,6 +231,7 @@ function computeGeometry(v) {
     frontAxle,
     wheelRadius,
     groundY,
+    steererTop,
     stemEnd,
     barEnd,
     saddleBase,
@@ -190,6 +250,7 @@ function bikeBoundPoints(geo) {
     geo.seatTop,
     geo.ettPoint,
     geo.headBottom,
+    geo.steererTop,
     geo.stemEnd,
     geo.barEnd,
     geo.saddleBase,
@@ -332,6 +393,7 @@ function drawSilhouette(container, proj, geo, opts) {
   const rearAxlePx = px(geo.rearAxle);
   const frontAxlePx = px(geo.frontAxle);
   const headBottomPx = px(geo.headBottom);
+  const steererTopPx = px(geo.steererTop);
   const stemEndPx = px(geo.stemEnd);
   const barEndPx = px(geo.barEnd);
   const saddleBasePx = px(geo.saddleBase);
@@ -385,9 +447,23 @@ function drawSilhouette(container, proj, geo, opts) {
   line(headPx, seatTopPx, "tube tube-top");
   line(bbPx, seatTopPx, "tube tube-seat");
 
-  // Cockpit
-  line(headPx, stemEndPx, "tube-cockpit");
-  circle(barEndPx, 9, "bar-ring");
+  // Headset spacers (steerer extension above the head tube) + cockpit
+  line(headPx, steererTopPx, "tube-spacers");
+  line(steererTopPx, stemEndPx, "tube-cockpit");
+  const barRing = circle(barEndPx, 9, "bar-ring");
+  if (!ghost) {
+    const isAlign = opts.alignPoint === "barEnd";
+    if (isAlign) barRing.classList.add("bar-ring-align");
+    const barTitle = el("title");
+    barTitle.textContent = isAlign
+      ? `Zarovnávací bod (${ALIGN_POINTS.barEnd})`
+      : `Zarovnat všechna kola podle: ${ALIGN_POINTS.barEnd}`;
+    barRing.appendChild(barTitle);
+    barRing.addEventListener("click", () => {
+      alignPoint = "barEnd";
+      commit();
+    });
+  }
 
   // Seatpost + saddle
   line(seatTopPx, saddleBasePx, "seatpost");
@@ -398,8 +474,21 @@ function drawSilhouette(container, proj, geo, opts) {
   );
 
   if (!ghost) {
-    for (const p of [bbPx, headPx, seatTopPx, headBottomPx]) {
-      g.appendChild(el("circle", { class: "joint", cx: p.x, cy: p.y, r: 6 }));
+    const jointPx = { bb: bbPx, headTop: headPx, seatTop: seatTopPx, headBottom: headBottomPx };
+    for (const key of Object.keys(jointPx)) {
+      const p = jointPx[key];
+      const isAlign = key === opts.alignPoint;
+      const joint = el("circle", { class: `joint${isAlign ? " joint-align" : ""}`, cx: p.x, cy: p.y, r: 6 });
+      const title = el("title");
+      title.textContent = isAlign
+        ? `Zarovnávací bod (${ALIGN_POINTS[key]})`
+        : `Zarovnat všechna kola podle: ${ALIGN_POINTS[key]}`;
+      joint.appendChild(title);
+      joint.addEventListener("click", () => {
+        alignPoint = key;
+        commit();
+      });
+      g.appendChild(joint);
     }
 
     g.appendChild(label(bbPx.x - 10, bbPx.y + 20, "BB", "middle"));
@@ -414,7 +503,8 @@ function drawSilhouette(container, proj, geo, opts) {
     const reachVal = Math.round(geo.headTop.x - geo.bb.x);
     const stackVal = Math.round(geo.headTop.y - geo.bb.y);
     const ettVal = Math.round(geo.headTop.x - geo.ettPoint.x);
-    const seatTubeVal = Math.round(Math.hypot(geo.seatTop.x, geo.seatTop.y));
+    const seatTubeVal = Math.round(Math.hypot(geo.seatTop.x - geo.bb.x, geo.seatTop.y - geo.bb.y));
+    const topTubeRealVal = Math.round(geo.topTubeRealLen);
 
     const reachY = Math.max(bbPx.y, headPx.y) + 30;
     dimLineH(dimGroup, bbPx.x, headPx.x, reachY, `Reach ${reachVal} mm`);
@@ -427,6 +517,13 @@ function drawSilhouette(container, proj, geo, opts) {
 
     dimLineBetween(dimGroup, saddleCenterPx, barEndPx, `Sedlo–řídítka ${Math.round(geo.saddleToBar)} mm`);
     dimLineBetween(dimGroup, bbPx, seatTopPx, `Sedlová trubka ${seatTubeVal} mm`, 60, { x: -1, y: 0 });
+    dimLineBetween(dimGroup, headPx, seatTopPx, `Horní trubka (skut.) ${topTubeRealVal} mm`, 22);
+
+    const spacerVal = Math.round(Math.hypot(geo.steererTop.x - geo.headTop.x, geo.steererTop.y - geo.headTop.y));
+    if (spacerVal > 0) {
+      g.appendChild(label(steererTopPx.x + 8, steererTopPx.y, "Podložky", "start"));
+      dimLineBetween(dimGroup, headPx, steererTopPx, `Podložky ${spacerVal} mm`, 16);
+    }
 
     g.appendChild(dimGroup);
   }
@@ -464,7 +561,7 @@ function drawNameTag(container, proj, geo, opts) {
   const anchor = proj.toPx(geo.saddleCenter);
   const goRight = index % 2 === 0;
   const dx = goRight ? 42 : -42;
-  const dy = -40 - (index % 3) * 15;
+  const dy = -70 - (index % 3) * 15;
   const labelPt = { x: anchor.x + dx, y: anchor.y + dy };
 
   const markerId = ghost ? `arrow-ghost-${index % GHOST_PALETTE.length}` : "arrow-active";
@@ -542,7 +639,7 @@ function getActiveBike() {
 }
 
 function setFormDisabled(disabled) {
-  for (const input of form.querySelectorAll("input")) input.disabled = disabled;
+  for (const input of form.querySelectorAll("input:not([readonly])")) input.disabled = disabled;
   saddleHeightApplyAllBtn.disabled = disabled;
 }
 
@@ -670,6 +767,7 @@ function mergeImportedBikes(parsed) {
   bikes = bikes.concat(imported);
   activeId = imported[0].id;
   commitBikeSwitch();
+  return imported.map((b) => b.id);
 }
 
 importBikesInput.addEventListener("change", (e) => {
@@ -693,9 +791,34 @@ importBikesInput.addEventListener("change", (e) => {
 // window.BIKE_GROUPS directly — a plain in-memory JS value, so this whole
 // section is synchronous. No fetch, no server, works straight off file://.
 
+// Tracks which catalog entries currently have a bike added to the list, so
+// their row can be hidden until that bike is removed again. Keyed by the raw
+// catalog bike object (identity from bikes-config.js), not by id — the added
+// bike gets its own fresh uid, unrelated to the catalog.
+const catalogBikeAddedIds = new Map();
+const catalogBikeRows = new Map();
+
+function trackCatalogAdd(bikeRaw, ids) {
+  const existing = catalogBikeAddedIds.get(bikeRaw) || [];
+  catalogBikeAddedIds.set(bikeRaw, existing.concat(ids));
+}
+
+// Re-checks which tracked ids are still present in `bikes` and hides/shows
+// each catalog row accordingly.
+function updateDataFilesAddedState() {
+  catalogBikeRows.forEach((row, bikeRaw) => {
+    const ids = catalogBikeAddedIds.get(bikeRaw) || [];
+    const stillPresent = ids.filter((id) => bikes.some((b) => b.id === id));
+    catalogBikeAddedIds.set(bikeRaw, stillPresent);
+    row.hidden = stillPresent.length > 0;
+  });
+}
+
 function renderDataFileGroup(group) {
   const label = group.label || "Kola";
-  const groupBikes = Array.isArray(group.bikes) ? group.bikes : [];
+  const groupBikes = (Array.isArray(group.bikes) ? group.bikes : [])
+    .slice()
+    .sort((a, b) => ((a && a.name) || "").localeCompare((b && b.name) || "", "cs"));
   let expanded = false;
 
   const bikesList = h("ul", { class: "data-file-bikes", hidden: true });
@@ -706,10 +829,21 @@ function renderDataFileGroup(group) {
       const name = (bikeRaw && bikeRaw.name) || "Kolo";
       const nameBtn = h(
         "button",
-        { type: "button", class: "data-file-bike-name", title: `Přidat „${name}“`, onclick: () => mergeImportedBikes([bikeRaw]) },
+        {
+          type: "button",
+          class: "data-file-bike-name",
+          title: `Přidat „${name}“`,
+          onclick: () => {
+            const ids = mergeImportedBikes([bikeRaw]);
+            trackCatalogAdd(bikeRaw, ids);
+            updateDataFilesAddedState();
+          },
+        },
         [name]
       );
-      bikesList.appendChild(h("li", { class: "data-file-bike-row" }, [nameBtn]));
+      const row = h("li", { class: "data-file-bike-row" }, [nameBtn]);
+      catalogBikeRows.set(bikeRaw, row);
+      bikesList.appendChild(row);
     });
   }
 
@@ -734,7 +868,11 @@ function renderDataFileGroup(group) {
       class: "data-file-group-add",
       title: `Přidat všechna kola ze skupiny „${label}“`,
       disabled: groupBikes.length === 0,
-      onclick: () => mergeImportedBikes(groupBikes),
+      onclick: () => {
+        const ids = mergeImportedBikes(groupBikes);
+        groupBikes.forEach((bikeRaw, i) => trackCatalogAdd(bikeRaw, [ids[i]]));
+        updateDataFilesAddedState();
+      },
     },
     [`+ Přidat vše (${groupBikes.length})`]
   );
@@ -760,6 +898,11 @@ form.addEventListener("input", () => {
   commit();
 });
 
+alignResetBtn.addEventListener("click", () => {
+  alignPoint = "bb";
+  commit();
+});
+
 saddleHeightApplyAllBtn.addEventListener("click", () => {
   const raw = parseFloat(inputs.saddleHeight.value);
   const value = Number.isFinite(raw) ? raw : DEFAULTS.saddleHeight;
@@ -772,6 +915,9 @@ saddleHeightApplyAllBtn.addEventListener("click", () => {
 function render() {
   const canvas = { w: 800, h: 600 };
 
+  alignHintLabelEl.textContent = ALIGN_POINTS[alignPoint];
+  alignResetBtn.disabled = alignPoint === "bb";
+
   if (bikes.length === 0) {
     while (svg.firstChild) svg.removeChild(svg.firstChild);
     svg.setAttribute("viewBox", `0 0 ${canvas.w} ${canvas.h}`);
@@ -780,11 +926,13 @@ function render() {
     outWheelbase.textContent = "–";
     outForkLength.textContent = "–";
     outSaddleToBar.textContent = "–";
+    topTubeRealInput.value = "";
     renderBikeList();
+    updateDataFilesAddedState();
     return;
   }
 
-  const entries = bikes.map((b) => ({ bike: b, geo: computeGeometry(b.values) }));
+  const entries = bikes.map((b) => ({ bike: b, geo: alignGeo(computeGeometry(b.values), alignPoint) }));
 
   const boundPoints = entries.flatMap(({ geo }) => bikeBoundPoints(geo));
   const proj = project(boundPoints, canvas);
@@ -804,7 +952,7 @@ function render() {
     if (entry === activeEntry) return;
     drawSilhouette(svg, proj, entry.geo, { ghost: true, color: ghostColor(i), name: entry.bike.name });
   });
-  drawSilhouette(svg, proj, activeEntry.geo, { ghost: false });
+  drawSilhouette(svg, proj, activeEntry.geo, { ghost: false, alignPoint });
 
   // Name-tag arrows on top of everything, so multiple bikes stay tellable apart.
   entries.forEach((entry, i) => {
@@ -819,11 +967,13 @@ function render() {
 
   outSeatAngle.textContent = `${activeEntry.geo.seatAngleDeg.toFixed(1)}°`;
   outInfo.textContent = `${activeEntry.geo.topTubeRealLen.toFixed(0)} mm`;
+  topTubeRealInput.value = Math.round(activeEntry.geo.topTubeRealLen);
   outWheelbase.textContent = `${activeEntry.geo.wheelbase.toFixed(0)} mm`;
   outForkLength.textContent = `${activeEntry.geo.forkLength.toFixed(0)} mm`;
   outSaddleToBar.textContent = `${activeEntry.geo.saddleToBar.toFixed(0)} mm`;
 
   renderBikeList();
+  updateDataFilesAddedState();
 }
 
 // ---- Bootstrap ----
