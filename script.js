@@ -16,6 +16,7 @@ const addBikeBtn = document.getElementById("add-bike");
 const resetBikesBtn = document.getElementById("reset-bikes");
 const exportBikesBtn = document.getElementById("export-bikes");
 const importBikesInput = document.getElementById("import-bikes");
+const saddleHeightApplyAllBtn = document.getElementById("saddle-height-apply-all");
 
 const FIELD_KEYS = [
   "reach", "stack", "ett", "seatTube",
@@ -497,6 +498,7 @@ function getActiveBike() {
 
 function setFormDisabled(disabled) {
   for (const input of form.querySelectorAll("input")) input.disabled = disabled;
+  saddleHeightApplyAllBtn.disabled = disabled;
 }
 
 function loadFormFromActive() {
@@ -711,6 +713,13 @@ if (Array.isArray(window.BIKE_GROUPS)) {
 
 form.addEventListener("input", () => {
   syncActiveFromForm();
+  commit();
+});
+
+saddleHeightApplyAllBtn.addEventListener("click", () => {
+  const raw = parseFloat(inputs.saddleHeight.value);
+  const value = Number.isFinite(raw) ? raw : DEFAULTS.saddleHeight;
+  for (const bike of bikes) bike.values.saddleHeight = value;
   commit();
 });
 

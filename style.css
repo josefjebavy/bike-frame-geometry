@@ -122,6 +122,32 @@ input[type="number"]:disabled {
   cursor: not-allowed;
 }
 
+.field-with-action {
+  display: flex;
+  gap: 6px;
+}
+
+.field-with-action input {
+  flex: 1;
+  min-width: 0;
+}
+
+.btn-mini {
+  flex: none;
+  font: inherit;
+  font-size: 0.75rem;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0 8px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn-mini:hover { border-color: var(--accent); }
+.btn-mini:disabled { opacity: 0.5; cursor: not-allowed; }
+
 .extra {
   margin-top: 4px;
   border-top: 1px solid var(--border);
