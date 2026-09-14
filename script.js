@@ -459,9 +459,21 @@ function loadState() {
       }
     }
   } catch (e) {
-    /* corrupt or unavailable storage: fall back to a fresh default bike */
+    /* corrupt or unavailable storage: fall back below */
   }
-  bikes = [{ id: uid(), name: "Kolo 1", values: { ...DEFAULTS } }];
+
+  // First run (nothing saved yet): seed from bikes-config.js if it's present,
+  // otherwise start with one blank default bike.
+  const presets = Array.isArray(window.BIKE_PRESETS) ? window.BIKE_PRESETS : null;
+  if (presets && presets.length) {
+    bikes = presets.map((p) => ({
+      id: uid(),
+      name: (p && p.name) || "Kolo",
+      values: normalizeValues(p && p.values),
+    }));
+  } else {
+    bikes = [{ id: uid(), name: "Kolo 1", values: { ...DEFAULTS } }];
+  }
   activeId = bikes[0].id;
 }
 
