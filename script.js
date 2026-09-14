@@ -420,13 +420,9 @@ function drawSilhouette(container, proj, geo, opts) {
     dimLineH(dimGroup, ettPx.x, headPx.x, ettY, `ETT ${ettVal} mm`);
 
     dimLineBetween(dimGroup, saddleCenterPx, barEndPx, `Sedlo–řídítka ${Math.round(geo.saddleToBar)} mm`);
+    dimLineBetween(dimGroup, bbPx, seatTopPx, `Sedlová trubka ${seatTubeVal} mm`, 24);
 
     g.appendChild(dimGroup);
-
-    const seatMid = { x: (bbPx.x + seatTopPx.x) / 2, y: (bbPx.y + seatTopPx.y) / 2 };
-    const seatLenLabel = el("text", { class: "dim-label", x: seatMid.x + 10, y: seatMid.y });
-    seatLenLabel.textContent = `${seatTubeVal} mm`;
-    g.appendChild(seatLenLabel);
   }
 
   container.appendChild(g);
