@@ -260,6 +260,40 @@ function dimLineV(group, y1, y2, x, text) {
   group.appendChild(t);
 }
 
+// Dimension line between two arbitrary points (e.g. saddle-to-bar), with
+// small perpendicular tick marks at each end and a label offset to the side.
+// Dimension between two arbitrary points, drawn offset to the side (like a
+// technical-drawing dimension: short extension lines from the real points
+// out to a parallel dimension line, which carries the label) instead of
+// right on top of the measured segment — so it doesn't sit under the frame.
+function dimLineBetween(group, p1, p2, text, offset = 40) {
+  const dx = p2.x - p1.x;
+  const dy = p2.y - p1.y;
+  const len = Math.hypot(dx, dy) || 1;
+  const ux = dx / len;
+  const uy = dy / len;
+  let nx = -uy;
+  let ny = ux;
+  if (ny > 0) {
+    nx = -nx;
+    ny = -ny;
+  } // keep the offset pointing up (smaller y), i.e. above the bike
+
+  const o1 = { x: p1.x + nx * offset, y: p1.y + ny * offset };
+  const o2 = { x: p2.x + nx * offset, y: p2.y + ny * offset };
+
+  group.appendChild(el("line", { class: "dim-line", x1: p1.x, y1: p1.y, x2: o1.x, y2: o1.y }));
+  group.appendChild(el("line", { class: "dim-line", x1: p2.x, y1: p2.y, x2: o2.x, y2: o2.y }));
+  group.appendChild(el("line", { class: "dim-line", x1: o1.x, y1: o1.y, x2: o2.x, y2: o2.y }));
+  for (const o of [o1, o2]) {
+    group.appendChild(el("line", { class: "dim-line", x1: o.x - nx * 5, y1: o.y - ny * 5, x2: o.x + nx * 5, y2: o.y + ny * 5 }));
+  }
+
+  const t = el("text", { class: "dim-label", x: (o1.x + o2.x) / 2, y: (o1.y + o2.y) / 2 - 6, "text-anchor": "middle" });
+  t.textContent = text;
+  group.appendChild(t);
+}
+
 function drawGrid(group, canvas, stepPx) {
   for (let x = 0; x <= canvas.w; x += stepPx) {
     group.appendChild(el("line", { class: "grid-line", x1: x, y1: 0, x2: x, y2: canvas.h }));
@@ -380,6 +414,8 @@ function drawSilhouette(container, proj, geo, opts) {
 
     const ettY = Math.min(ettPx.y, headPx.y) - 20;
     dimLineH(dimGroup, ettPx.x, headPx.x, ettY, `ETT ${ettVal} mm`);
+
+    dimLineBetween(dimGroup, saddleCenterPx, barEndPx, `Sedlo–řídítka ${Math.round(geo.saddleToBar)} mm`);
 
     g.appendChild(dimGroup);
 
