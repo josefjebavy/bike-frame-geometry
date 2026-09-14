@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Geometrie rámu kola</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>Vizualizace geometrie rámu kola</h1>
+      <p class="subtitle">Zadej klíčové rozměry a app vykreslí hlavní trojúhelník rámu.</p>
+    </header>
+
+    <main>
+      <section class="panel">
+        <h2>Rozměry</h2>
+        <form id="geo-form">
+          <label>
+            Reach (mm)
+            <input type="number" id="reach" step="1" value="385">
+          </label>
+          <label>
+            Stack (mm)
+            <input type="number" id="stack" step="1" value="585">
+          </label>
+          <label>
+            Effective Top Tube (mm)
+            <input type="number" id="ett" step="1" value="565">
+          </label>
+          <label>
+            Délka sedlové trubky (mm, BB–horní hrana)
+            <input type="number" id="seatTube" step="1" value="520">
+          </label>
+        </form>
+
+        <div class="derived">
+          <h3>Odvozené hodnoty</h3>
+          <dl>
+            <dt>Úhel sedlové trubky</dt>
+            <dd id="out-seat-angle">–</dd>
+            <dt>Délka horní trubky (BB→hlava→sedlovka, přímka)</dt>
+            <dd id="out-info">–</dd>
+          </dl>
+          <p class="note">
+            Sedlová trubka je vedena z BB přes bod, kde ji ve výšce
+            stacku protíná effective top tube; úhel sedlovky je z toho
+            dopočítán, ne zadáván.
+          </p>
+        </div>
+      </section>
+
+      <section class="canvas-wrap">
+        <svg id="frame-svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid meet"></svg>
+      </section>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
