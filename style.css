@@ -71,21 +71,9 @@ header h1 {
 }
 
 main {
-  display: grid;
-  grid-template-columns: 280px 1fr;
-  gap: 20px;
-  align-items: start;
-}
-
-.sidebar {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  min-width: 0;
-}
-
-@media (max-width: 720px) {
-  main { grid-template-columns: 1fr; }
 }
 
 .panel {
@@ -263,23 +251,16 @@ dd { margin: 0; font-weight: 600; text-align: right; }
 
 .btn-secondary:hover { border-color: var(--accent); }
 
-.btn-block {
-  width: 100%;
+.bike-actions-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
   margin-bottom: 10px;
 }
 
-.bike-io {
-  display: flex;
-  gap: 8px;
-}
-
-.bike-io > * {
-  flex: 1;
-  min-width: 0;
-}
-
-#reset-bikes {
-  margin-top: 10px;
+.bike-actions-row > * {
+  flex: 1 1 auto;
+  min-width: 140px;
 }
 
 .canvas-wrap {
@@ -287,14 +268,14 @@ dd { margin: 0; font-weight: 600; text-align: right; }
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 10px;
-  min-height: 420px;
+  min-height: 480px;
   display: flex;
 }
 
 #frame-svg {
   width: 100%;
   height: auto;
-  min-height: 400px;
+  min-height: 460px;
 }
 
 .grid-line { stroke: var(--grid); stroke-width: 1; }

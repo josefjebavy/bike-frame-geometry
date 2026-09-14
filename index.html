@@ -14,23 +14,26 @@
     </header>
 
     <main>
-      <div class="sidebar">
       <section class="panel bikes-panel">
         <h2>Kola</h2>
         <ul id="bike-list" class="bike-list"></ul>
-        <button type="button" id="add-bike" class="btn-secondary btn-block">+ Přidat kolo</button>
-        <div class="bike-io">
+        <div class="bike-actions-row">
+          <button type="button" id="add-bike" class="btn-secondary">+ Přidat kolo</button>
           <button type="button" id="export-bikes" class="btn-secondary">Export JSON</button>
           <label class="btn-secondary file-label">
             Import JSON
             <input type="file" id="import-bikes" accept="application/json" hidden>
           </label>
+          <button type="button" id="reset-bikes" class="btn-secondary">Reset na výchozí kola</button>
         </div>
-        <button type="button" id="reset-bikes" class="btn-secondary btn-block">Reset na výchozí kola</button>
         <p class="note">
-          Aktivní kolo se kreslí plnou barvou a jde upravovat vlevo dole.
+          Aktivní kolo se kreslí plnou barvou a jde upravovat dole ve formuláři.
           Ostatní kola se kreslí poloprůhledně na pozadí pro porovnání.
         </p>
+      </section>
+
+      <section class="canvas-wrap">
+        <svg id="frame-svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid meet"></svg>
       </section>
 
       <section class="panel">
@@ -122,11 +125,6 @@
             zemní lince.
           </p>
         </div>
-      </section>
-      </div>
-
-      <section class="canvas-wrap">
-        <svg id="frame-svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid meet"></svg>
       </section>
     </main>
   </div>
