@@ -426,7 +426,7 @@ function drawSilhouette(container, proj, geo, opts) {
     dimLineH(dimGroup, ettPx.x, headPx.x, ettY, `ETT ${ettVal} mm`);
 
     dimLineBetween(dimGroup, saddleCenterPx, barEndPx, `Sedlo–řídítka ${Math.round(geo.saddleToBar)} mm`);
-    dimLineBetween(dimGroup, bbPx, seatTopPx, `Sedlová trubka ${seatTubeVal} mm`, 30, { x: -1, y: 0 });
+    dimLineBetween(dimGroup, bbPx, seatTopPx, `Sedlová trubka ${seatTubeVal} mm`, 60, { x: -1, y: 0 });
 
     g.appendChild(dimGroup);
   }
