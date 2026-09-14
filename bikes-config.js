@@ -338,6 +338,31 @@ window.BIKE_GROUPS = [
           "headTubeLen": 150,
           "forkRake": 46
         }
+      },
+      // Source: data2/mtb-DUR_11-03-017_torain_Jebavý.pdf — custom-fit frame
+      // (Duratec "Frame with Optimized Geometry", mtb komfortní), rám pro 29"
+      // kola. Diagram gives I=stack, A2=ett (the bracket at top-tube height;
+      // A1=645 sits higher and isn't a standard frame dimension, skipped),
+      // B2=seatTube, C1=chainstay, F=headTubeLen, alfa=headAngle, beta=seat
+      // tube angle. Reach isn't given directly — derived from stack, ett and
+      // beta via the same relation the app itself uses to fix the seat tube
+      // direction (reach = ett - stack/tan(beta) = 614 - 684/tan(72.1°) ≈
+      // 393.1). No BB drop or fork rake on this chart.
+      {
+        "brand": "Duratec",
+        "velikost": "XXL",
+        "typ": "mtb",
+        "name": "Duratec Sonix CX4 (custom, 29\")",
+        "values": {
+          "reach": 393.1,
+          "stack": 684,
+          "ett": 614,
+          "seatTube": 560,
+          "chainstay": 450,
+          "wheelDia": 737,
+          "headAngle": 71.5,
+          "headTubeLen": 175
+        }
       }
     ]
   },
