@@ -344,18 +344,20 @@ window.BIKE_GROUPS = [
       // kola. Diagram gives I=stack, A1=ett (confirmed with the user — the
       // higher horizontal bracket, at head-tube-top height; A2=614 is a
       // different/lower reference, not used), B2=seatTube, C1=chainstay,
-      // F=headTubeLen, alfa=headAngle, beta=seat tube angle. Reach isn't
-      // given directly — derived from stack, ett and beta via the same
-      // relation the app itself uses to fix the seat tube direction
-      // (reach = ett - stack/tan(beta) = 645 - 684/tan(72.1°) ≈ 424.1).
-      // No BB drop or fork rake on this chart.
+      // F=headTubeLen, alfa=headAngle, beta=seat tube angle. No BB drop or
+      // fork rake on this chart.
+      //
+      // Reach: the trig estimate from stack/ett/beta (≈424.1) was wrong per
+      // the user — corrected using the "Geometrie posedu" chart instead,
+      // where stem length (130mm) + frame reach = 531mm (BB-to-bar-clamp
+      // horizontal), so reach = 531 - 130 = 401.
       {
         "brand": "Duratec",
         "velikost": "XXL",
         "typ": "mtb",
         "name": "Duratec Sonix CX4 (custom, 29\")",
         "values": {
-          "reach": 424.1,
+          "reach": 401,
           "stack": 684,
           "ett": 645,
           "seatTube": 560,
