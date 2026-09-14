@@ -11,6 +11,7 @@ const outSeatAngle = document.getElementById("out-seat-angle");
 const outInfo = document.getElementById("out-info");
 const outWheelbase = document.getElementById("out-wheelbase");
 const outForkLength = document.getElementById("out-fork-length");
+const outSaddleToBar = document.getElementById("out-saddle-to-bar");
 
 const addBikeBtn = document.getElementById("add-bike");
 const resetBikesBtn = document.getElementById("reset-bikes");
@@ -155,6 +156,7 @@ function computeGeometry(v) {
   const saddleCenter = { x: saddleBase.x - v.saddleSetback, y: saddleBase.y };
 
   const wheelbase = frontAxle.x - rearAxle.x;
+  const saddleToBar = Math.hypot(barEnd.x - saddleCenter.x, barEnd.y - saddleCenter.y);
 
   return {
     bb,
@@ -173,6 +175,7 @@ function computeGeometry(v) {
     saddleCenter,
     wheelbase,
     forkLength,
+    saddleToBar,
   };
 }
 
@@ -735,6 +738,7 @@ function render() {
     outInfo.textContent = "–";
     outWheelbase.textContent = "–";
     outForkLength.textContent = "–";
+    outSaddleToBar.textContent = "–";
     renderBikeList();
     return;
   }
@@ -777,6 +781,7 @@ function render() {
   outInfo.textContent = `${frontLen.toFixed(0)} mm`;
   outWheelbase.textContent = `${activeEntry.geo.wheelbase.toFixed(0)} mm`;
   outForkLength.textContent = `${activeEntry.geo.forkLength.toFixed(0)} mm`;
+  outSaddleToBar.textContent = `${activeEntry.geo.saddleToBar.toFixed(0)} mm`;
 
   renderBikeList();
 }
