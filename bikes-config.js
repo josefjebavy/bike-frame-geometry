@@ -355,7 +355,7 @@ window.BIKE_GROUPS = [
         "brand": "Duratec",
         "velikost": "XXL",
         "typ": "mtb",
-        "name": "Duratec Sonix CX4 (custom, 29\")",
+        "name": "Duratec Torain C1 (custom, 29\")",
         "values": {
           "reach": 401,
           "stack": 684,
@@ -426,7 +426,7 @@ window.BIKE_GROUPS = [
         "brand": "Duratec",
         "velikost": "XXL",
         "typ": "silnice",
-        "name": "Duratec Cool R14 (custom, road)",
+        "name": "Duratec Rebel S8 (custom, road/cyklokros)",
         "values": {
           "reach": 416.6,
           "stack": 629,
