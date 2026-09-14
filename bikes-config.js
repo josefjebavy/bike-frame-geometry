@@ -407,6 +407,34 @@ window.BIKE_GROUPS = [
           "headAngle": 73.8,
           "headTubeLen": 206
         }
+      },
+      // Source: data2/sinickaDUR_17-10-004_COOL R14_Jebavý.pdf — custom-fit
+      // frame (Duratec FOG, silniční komfortní). Unlike the mtb calc type,
+      // this report has no separate lettered "Geometrie rámu" diagram, only
+      // an unlabeled "Geometrie posedu" one — mapping confirmed with the
+      // user by testing which ett/stack pair yields a physically plausible
+      // reach: ett=621 (top horizontal bracket, at head-tube-top height),
+      // stack=629 (inner vertical bracket at the head tube), seatTube=627,
+      // headAngle=72.5°, headTubeLen=156, forkRake=45, bbDrop=71. Reach
+      // derived the same way as the Sonix CX4 entry: 621 - 629/tan(72.0°
+      // seat angle) ≈ 416.6. No chainstay on this diagram (no rear wheel
+      // drawn); wheelDia assumed 700 (standard road, not stated).
+      {
+        "brand": "Duratec",
+        "velikost": "XXL",
+        "typ": "silnice",
+        "name": "Duratec Cool R14 (custom, road)",
+        "values": {
+          "reach": 416.6,
+          "stack": 629,
+          "ett": 621,
+          "seatTube": 627,
+          "bbDrop": 71,
+          "wheelDia": 700,
+          "headAngle": 72.5,
+          "headTubeLen": 156,
+          "forkRake": 45
+        }
       }
     ]
   }
