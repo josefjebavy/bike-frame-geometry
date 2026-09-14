@@ -331,7 +331,15 @@ dd { margin: 0; font-weight: 600; text-align: right; }
 .ghost-group { opacity: 0.55; }
 .ghost-line { fill: none; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
 .ghost-wheel { fill: none; stroke-width: 2; }
-.ghost-label {
-  font-size: 10px;
-  font-weight: 600;
+
+.nametag-line { stroke-width: 1.5; opacity: 0.9; }
+.nametag-line-active { stroke: var(--accent); }
+.nametag-text {
+  font-size: 12px;
+  font-weight: 700;
+  paint-order: stroke;
+  stroke: var(--panel-bg);
+  stroke-width: 3px;
 }
+.nametag-text-active { fill: var(--accent); }
+.arrow-active-fill { fill: var(--accent); }

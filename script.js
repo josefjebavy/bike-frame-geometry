@@ -188,7 +188,7 @@ function project(points, canvas) {
   const PAD = 30;
   const DIM_LEFT = 75;
   const DIM_BOTTOM = 70;
-  const DIM_TOP = 55;
+  const DIM_TOP = 95;
   const DIM_RIGHT = 40;
 
   const xs = points.map((p) => p.x);
@@ -267,7 +267,6 @@ function label(x, y, text, anchor = "start", extraClass = "") {
 function drawSilhouette(container, proj, geo, opts) {
   const ghost = !!opts.ghost;
   const color = opts.color;
-  const name = opts.name;
   const px = proj.toPx;
 
   const bbPx = px(geo.bb);
@@ -345,9 +344,7 @@ function drawSilhouette(container, proj, geo, opts) {
       : { class: "saddle-line", x1: saddleCenterPx.x - 32, y1: saddleCenterPx.y, x2: saddleCenterPx.x + 32, y2: saddleCenterPx.y })
   );
 
-  if (ghost) {
-    g.appendChild(label(headPx.x + 6, headPx.y - 8, name, "start", "ghost-label"));
-  } else {
+  if (!ghost) {
     for (const p of [bbPx, headPx, seatTopPx, headBottomPx]) {
       g.appendChild(el("circle", { class: "joint", cx: p.x, cy: p.y, r: 6 }));
     }
@@ -384,6 +381,64 @@ function drawSilhouette(container, proj, geo, opts) {
   }
 
   container.appendChild(g);
+}
+
+function buildArrowDefs() {
+  const defs = el("defs");
+  const makeMarker = (id, colorAttr) => {
+    const marker = el("marker", {
+      id,
+      viewBox: "0 0 10 10",
+      refX: "9",
+      refY: "5",
+      markerWidth: "6",
+      markerHeight: "6",
+      orient: "auto-start-reverse",
+    });
+    const path = el("path", { d: "M0,0 L10,5 L0,10 z" });
+    if (colorAttr) path.setAttribute("fill", colorAttr);
+    else path.setAttribute("class", "arrow-active-fill");
+    marker.appendChild(path);
+    return marker;
+  };
+  GHOST_PALETTE.forEach((color, i) => defs.appendChild(makeMarker(`arrow-ghost-${i}`, color)));
+  defs.appendChild(makeMarker("arrow-active", null));
+  return defs;
+}
+
+/** Name label with a leader-line arrow pointing at the bike's saddle, so
+ * overlapping silhouettes can be told apart. */
+function drawNameTag(container, proj, geo, opts) {
+  const { ghost, color, name, index } = opts;
+  const anchor = proj.toPx(geo.saddleCenter);
+  const goRight = index % 2 === 0;
+  const dx = goRight ? 42 : -42;
+  const dy = -40 - (index % 3) * 15;
+  const labelPt = { x: anchor.x + dx, y: anchor.y + dy };
+
+  const markerId = ghost ? `arrow-ghost-${index % GHOST_PALETTE.length}` : "arrow-active";
+  const lineAttrs = {
+    x1: labelPt.x,
+    y1: labelPt.y,
+    x2: anchor.x,
+    y2: anchor.y,
+    "marker-end": `url(#${markerId})`,
+  };
+  container.appendChild(
+    el("line", ghost
+      ? { ...lineAttrs, class: "nametag-line", stroke: color }
+      : { ...lineAttrs, class: "nametag-line nametag-line-active" })
+  );
+
+  const text = el("text", {
+    class: ghost ? "nametag-text" : "nametag-text nametag-text-active",
+    x: labelPt.x + (goRight ? 4 : -4),
+    y: labelPt.y + 4,
+    "text-anchor": goRight ? "start" : "end",
+  });
+  if (ghost) text.setAttribute("fill", color);
+  text.textContent = name;
+  container.appendChild(text);
 }
 
 // ---- Persistence ----
@@ -568,6 +623,7 @@ function render() {
 
   while (svg.firstChild) svg.removeChild(svg.firstChild);
   svg.setAttribute("viewBox", `0 0 ${canvas.w} ${canvas.h}`);
+  svg.appendChild(buildArrowDefs());
 
   const gridGroup = el("g");
   drawGrid(gridGroup, canvas, proj.scale * 50 > 15 ? proj.scale * 50 : proj.scale * 100);
@@ -581,6 +637,17 @@ function render() {
     drawSilhouette(svg, proj, entry.geo, { ghost: true, color: ghostColor(i), name: entry.bike.name });
   });
   drawSilhouette(svg, proj, activeEntry.geo, { ghost: false });
+
+  // Name-tag arrows on top of everything, so multiple bikes stay tellable apart.
+  entries.forEach((entry, i) => {
+    const isActive = entry === activeEntry;
+    drawNameTag(svg, proj, entry.geo, {
+      ghost: !isActive,
+      color: ghostColor(i),
+      name: entry.bike.name,
+      index: i,
+    });
+  });
 
   outSeatAngle.textContent = `${activeEntry.geo.seatAngleDeg.toFixed(1)}°`;
   const frontLen = Math.hypot(activeEntry.geo.headTop.x - activeEntry.geo.bb.x, activeEntry.geo.headTop.y - activeEntry.geo.bb.y);
