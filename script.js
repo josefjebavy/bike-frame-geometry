@@ -157,6 +157,9 @@ function computeGeometry(v) {
 
   const wheelbase = frontAxle.x - rearAxle.x;
   const saddleToBar = Math.hypot(barEnd.x - saddleCenter.x, barEnd.y - saddleCenter.y);
+  // Real (sloped) top tube length, head-tube-top to seat-tube-top — as
+  // opposed to `ett`, which is the horizontal-only "effective" measure.
+  const topTubeRealLen = Math.hypot(seatTop.x - headTop.x, seatTop.y - headTop.y);
 
   return {
     bb,
@@ -176,6 +179,7 @@ function computeGeometry(v) {
     wheelbase,
     forkLength,
     saddleToBar,
+    topTubeRealLen,
   };
 }
 
@@ -813,8 +817,7 @@ function render() {
   });
 
   outSeatAngle.textContent = `${activeEntry.geo.seatAngleDeg.toFixed(1)}°`;
-  const frontLen = Math.hypot(activeEntry.geo.headTop.x - activeEntry.geo.bb.x, activeEntry.geo.headTop.y - activeEntry.geo.bb.y);
-  outInfo.textContent = `${frontLen.toFixed(0)} mm`;
+  outInfo.textContent = `${activeEntry.geo.topTubeRealLen.toFixed(0)} mm`;
   outWheelbase.textContent = `${activeEntry.geo.wheelbase.toFixed(0)} mm`;
   outForkLength.textContent = `${activeEntry.geo.forkLength.toFixed(0)} mm`;
   outSaddleToBar.textContent = `${activeEntry.geo.saddleToBar.toFixed(0)} mm`;
