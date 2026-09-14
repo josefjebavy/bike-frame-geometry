@@ -278,6 +278,10 @@ dd { margin: 0; font-weight: 600; text-align: right; }
   min-width: 0;
 }
 
+#reset-bikes {
+  margin-top: 10px;
+}
+
 .canvas-wrap {
   background: var(--panel-bg);
   border: 1px solid var(--border);

@@ -443,6 +443,23 @@ function drawNameTag(container, proj, geo, opts) {
 
 // ---- Persistence ----
 
+// Seeds `bikes`/`activeId` from bikes-config.js's presets if present,
+// otherwise a single blank default bike. Used both on first run and by
+// the "Reset" button.
+function seedDefaultBikes() {
+  const presets = Array.isArray(window.BIKE_PRESETS) ? window.BIKE_PRESETS : null;
+  if (presets && presets.length) {
+    bikes = presets.map((p) => ({
+      id: uid(),
+      name: (p && p.name) || "Kolo",
+      values: normalizeValues(p && p.values),
+    }));
+  } else {
+    bikes = [{ id: uid(), name: "Kolo 1", values: { ...DEFAULTS } }];
+  }
+  activeId = bikes[0].id;
+}
+
 function loadState() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -462,19 +479,8 @@ function loadState() {
     /* corrupt or unavailable storage: fall back below */
   }
 
-  // First run (nothing saved yet): seed from bikes-config.js if it's present,
-  // otherwise start with one blank default bike.
-  const presets = Array.isArray(window.BIKE_PRESETS) ? window.BIKE_PRESETS : null;
-  if (presets && presets.length) {
-    bikes = presets.map((p) => ({
-      id: uid(),
-      name: (p && p.name) || "Kolo",
-      values: normalizeValues(p && p.values),
-    }));
-  } else {
-    bikes = [{ id: uid(), name: "Kolo 1", values: { ...DEFAULTS } }];
-  }
-  activeId = bikes[0].id;
+  // First run: nothing saved yet.
+  seedDefaultBikes();
 }
 
 function saveState() {
@@ -573,6 +579,14 @@ document.getElementById("add-bike").addEventListener("click", () => {
   const id = uid();
   bikes.push({ id, name: `Kolo ${bikes.length + 1}`, values: { ...base.values } });
   activeId = id;
+  loadFormFromActive();
+  saveState();
+  render();
+});
+
+document.getElementById("reset-bikes").addEventListener("click", () => {
+  if (!window.confirm("Obnovit výchozí sadu kol? Aktuální seznam kol (i uložené úpravy) se ztratí.")) return;
+  seedDefaultBikes();
   loadFormFromActive();
   saveState();
   render();
