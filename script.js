@@ -1,7 +1,21 @@
 const SVG_NS = "http://www.w3.org/2000/svg";
+
+// ---- DOM refs ----
 const svg = document.getElementById("frame-svg");
 const form = document.getElementById("geo-form");
 const bikeListEl = document.getElementById("bike-list");
+const dataFilesListEl = document.getElementById("data-files-list");
+const dataFilesSectionEl = document.getElementById("data-files-section");
+
+const outSeatAngle = document.getElementById("out-seat-angle");
+const outInfo = document.getElementById("out-info");
+const outWheelbase = document.getElementById("out-wheelbase");
+const outForkLength = document.getElementById("out-fork-length");
+
+const addBikeBtn = document.getElementById("add-bike");
+const resetBikesBtn = document.getElementById("reset-bikes");
+const exportBikesBtn = document.getElementById("export-bikes");
+const importBikesInput = document.getElementById("import-bikes");
 
 const FIELD_KEYS = [
   "reach", "stack", "ett", "seatTube",
@@ -23,11 +37,6 @@ const GHOST_PALETTE = ["#b3441f", "#3f6b4d", "#35577d", "#8a5a2b", "#6a4c93", "#
 const STORAGE_KEY = "bike-frame-geometry:bikes:v1";
 
 const inputs = Object.fromEntries(FIELD_KEYS.map((k) => [k, document.getElementById(k)]));
-
-const outSeatAngle = document.getElementById("out-seat-angle");
-const outInfo = document.getElementById("out-info");
-const outWheelbase = document.getElementById("out-wheelbase");
-const outForkLength = document.getElementById("out-fork-length");
 
 let bikes = [];
 let activeId = null;
@@ -284,30 +293,31 @@ function drawSilhouette(container, proj, geo, opts) {
 
   const g = el("g", ghost ? { class: "ghost-group" } : {});
 
-  const line = (a, b, activeClass) => {
+  // In ghost mode every part collapses to one muted, bike-colored style
+  // (`ghost-line`/`ghost-wheel` + explicit stroke); in active mode each
+  // part keeps its own class/color from style.css.
+  const line = (a, b, activeClass, ghostExtra = {}) =>
     g.appendChild(
       el("line", ghost
-        ? { class: "ghost-line", stroke: color, x1: a.x, y1: a.y, x2: b.x, y2: b.y }
+        ? { class: "ghost-line", stroke: color, x1: a.x, y1: a.y, x2: b.x, y2: b.y, ...ghostExtra }
         : { class: activeClass, x1: a.x, y1: a.y, x2: b.x, y2: b.y })
     );
-  };
+
+  const circle = (c, r, activeClass) =>
+    g.appendChild(
+      el("circle", ghost
+        ? { class: "ghost-wheel", stroke: color, cx: c.x, cy: c.y, r }
+        : { class: activeClass, cx: c.x, cy: c.y, r })
+    );
 
   // Ground line
-  const g1 = px({ x: proj.minX, y: geo.groundY });
-  const g2 = px({ x: proj.maxX, y: geo.groundY });
-  g.appendChild(
-    el("line", ghost
-      ? { class: "ghost-line", stroke: color, "stroke-width": 1, "stroke-dasharray": "2 5", x1: g1.x, y1: g1.y, x2: g2.x, y2: g2.y }
-      : { class: "ground-line", x1: g1.x, y1: g1.y, x2: g2.x, y2: g2.y })
-  );
+  const groundStart = px({ x: proj.minX, y: geo.groundY });
+  const groundEnd = px({ x: proj.maxX, y: geo.groundY });
+  line(groundStart, groundEnd, "ground-line", { "stroke-width": 1, "stroke-dasharray": "2 5" });
 
   // Wheels
   for (const c of [rearAxlePx, frontAxlePx]) {
-    g.appendChild(
-      el("circle", ghost
-        ? { class: "ghost-wheel", stroke: color, cx: c.x, cy: c.y, r: wheelRPx }
-        : { class: "wheel", cx: c.x, cy: c.y, r: wheelRPx })
-    );
+    circle(c, wheelRPx, "wheel");
     if (!ghost) g.appendChild(el("circle", { class: "hub", cx: c.x, cy: c.y, r: 4 }));
   }
 
@@ -330,18 +340,14 @@ function drawSilhouette(container, proj, geo, opts) {
 
   // Cockpit
   line(headPx, stemEndPx, "tube-cockpit");
-  g.appendChild(
-    el("circle", ghost
-      ? { class: "ghost-wheel", stroke: color, cx: barEndPx.x, cy: barEndPx.y, r: 9 }
-      : { class: "bar-ring", cx: barEndPx.x, cy: barEndPx.y, r: 9 })
-  );
+  circle(barEndPx, 9, "bar-ring");
 
   // Seatpost + saddle
   line(seatTopPx, saddleBasePx, "seatpost");
-  g.appendChild(
-    el("line", ghost
-      ? { class: "ghost-line", stroke: color, x1: saddleCenterPx.x - 32, y1: saddleCenterPx.y, x2: saddleCenterPx.x + 32, y2: saddleCenterPx.y }
-      : { class: "saddle-line", x1: saddleCenterPx.x - 32, y1: saddleCenterPx.y, x2: saddleCenterPx.x + 32, y2: saddleCenterPx.y })
+  line(
+    { x: saddleCenterPx.x - 32, y: saddleCenterPx.y },
+    { x: saddleCenterPx.x + 32, y: saddleCenterPx.y },
+    "saddle-line"
   );
 
   if (!ghost) {
@@ -443,21 +449,18 @@ function drawNameTag(container, proj, geo, opts) {
 
 // ---- Persistence ----
 
-// Seeds `bikes`/`activeId` from bikes-config.js's presets if present,
-// otherwise a single blank default bike. Used both on first run and by
-// the "Reset" button.
-function seedDefaultBikes() {
-  const presets = Array.isArray(window.BIKE_PRESETS) ? window.BIKE_PRESETS : null;
-  if (presets && presets.length) {
-    bikes = presets.map((p) => ({
-      id: uid(),
-      name: (p && p.name) || "Kolo",
-      values: normalizeValues(p && p.values),
-    }));
-  } else {
-    bikes = [{ id: uid(), name: "Kolo 1", values: { ...DEFAULTS } }];
-  }
-  activeId = bikes[0].id;
+// Builds a bike record from raw data (localStorage, import, or an add-bike
+// clone), keeping brand/velikost/typ as free-form metadata alongside the
+// numeric geometry.
+function normalizeBikeRecord(b) {
+  return {
+    id: (b && b.id) || uid(),
+    name: (b && b.name) || "Kolo",
+    brand: (b && b.brand) || "",
+    velikost: (b && b.velikost) || "",
+    typ: (b && b.typ) || "",
+    values: normalizeValues(b && b.values),
+  };
 }
 
 function loadState() {
@@ -465,13 +468,9 @@ function loadState() {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed.bikes) && parsed.bikes.length) {
-        bikes = parsed.bikes.map((b) => ({
-          id: (b && b.id) || uid(),
-          name: (b && b.name) || "Kolo",
-          values: normalizeValues(b && b.values),
-        }));
-        activeId = bikes.some((b) => b.id === parsed.activeId) ? parsed.activeId : bikes[0].id;
+      if (Array.isArray(parsed.bikes)) {
+        bikes = parsed.bikes.map(normalizeBikeRecord);
+        activeId = bikes.some((b) => b.id === parsed.activeId) ? parsed.activeId : bikes[0] ? bikes[0].id : null;
         return;
       }
     }
@@ -479,8 +478,10 @@ function loadState() {
     /* corrupt or unavailable storage: fall back below */
   }
 
-  // First run: nothing saved yet.
-  seedDefaultBikes();
+  // First run: the app starts with no bikes loaded. Add one manually or
+  // use "Import JSON" to load a data file (e.g. data/mtb-XL.json).
+  bikes = [];
+  activeId = null;
 }
 
 function saveState() {
@@ -492,23 +493,53 @@ function saveState() {
 }
 
 function getActiveBike() {
-  return bikes.find((b) => b.id === activeId) || bikes[0];
+  return bikes.find((b) => b.id === activeId) || bikes[0] || null;
+}
+
+function setFormDisabled(disabled) {
+  for (const input of form.querySelectorAll("input")) input.disabled = disabled;
 }
 
 function loadFormFromActive() {
-  const v = getActiveBike().values;
+  const bike = getActiveBike();
+  const v = bike ? bike.values : DEFAULTS;
   for (const k of FIELD_KEYS) inputs[k].value = v[k];
+  setFormDisabled(!bike);
 }
 
 function syncActiveFromForm() {
   const bike = getActiveBike();
+  if (!bike) return;
   bike.values = normalizeValues(Object.fromEntries(FIELD_KEYS.map((k) => [k, parseFloat(inputs[k].value)])));
+}
+
+// Persist + redraw — every mutation to `bikes`/`activeId` ends with this.
+function commit() {
+  saveState();
+  render();
+}
+
+// Same, plus refreshing the form to match the (possibly new) active bike —
+// use this whenever activeId changes or a bike is added/removed/imported.
+function commitBikeSwitch() {
+  loadFormFromActive();
+  commit();
 }
 
 // ---- Bike list UI ----
 
+function iconBtn(title, text, onclick) {
+  return h("button", { type: "button", class: "bike-icon-btn", title, onclick }, [text]);
+}
+
 function renderBikeList() {
   bikeListEl.innerHTML = "";
+
+  if (bikes.length === 0) {
+    bikeListEl.appendChild(h("li", { class: "bike-list-empty" }, ["Zatím žádné kolo — přidej nové nebo načti datový soubor (Import JSON)."]));
+    return;
+  }
+
   bikes.forEach((bike, i) => {
     const isActive = bike.id === activeId;
 
@@ -524,75 +555,55 @@ function renderBikeList() {
         onclick: () => {
           if (activeId === bike.id) return;
           activeId = bike.id;
-          loadFormFromActive();
-          saveState();
-          render();
+          commitBikeSwitch();
         },
       },
       [bike.name]
     );
 
-    const renameBtn = h(
-      "button",
-      {
-        type: "button",
-        class: "bike-icon-btn",
-        title: "Přejmenovat",
-        onclick: () => {
-          const next = window.prompt("Název kola", bike.name);
-          if (next && next.trim()) {
-            bike.name = next.trim();
-            saveState();
-            render();
-          }
-        },
-      },
-      ["✎"]
-    );
+    const renameBtn = iconBtn("Přejmenovat", "✎", () => {
+      const next = window.prompt("Název kola", bike.name);
+      if (next && next.trim()) {
+        bike.name = next.trim();
+        commit();
+      }
+    });
 
-    const deleteBtn = h(
-      "button",
-      {
-        type: "button",
-        class: "bike-icon-btn",
-        title: "Smazat",
-        disabled: bikes.length <= 1,
-        onclick: () => {
-          if (bikes.length <= 1) return;
-          if (!window.confirm(`Smazat kolo „${bike.name}“?`)) return;
-          bikes = bikes.filter((b) => b.id !== bike.id);
-          if (activeId === bike.id) activeId = bikes[0].id;
-          loadFormFromActive();
-          saveState();
-          render();
-        },
-      },
-      ["×"]
-    );
+    const deleteBtn = iconBtn("Smazat", "×", () => {
+      if (!window.confirm(`Smazat kolo „${bike.name}“?`)) return;
+      bikes = bikes.filter((b) => b.id !== bike.id);
+      if (activeId === bike.id) activeId = bikes[0] ? bikes[0].id : null;
+      commitBikeSwitch();
+    });
 
     bikeListEl.appendChild(h("li", { class: `bike-row${isActive ? " active" : ""}` }, [swatch, selectBtn, renameBtn, deleteBtn]));
   });
 }
 
-document.getElementById("add-bike").addEventListener("click", () => {
+addBikeBtn.addEventListener("click", () => {
   const base = getActiveBike();
   const id = uid();
-  bikes.push({ id, name: `Kolo ${bikes.length + 1}`, values: { ...base.values } });
+  bikes.push({
+    id,
+    name: `Kolo ${bikes.length + 1}`,
+    brand: base ? base.brand : "",
+    velikost: base ? base.velikost : "",
+    typ: base ? base.typ : "",
+    values: base ? { ...base.values } : { ...DEFAULTS },
+  });
   activeId = id;
-  loadFormFromActive();
-  saveState();
-  render();
+  commitBikeSwitch();
 });
 
-document.getElementById("reset-bikes").addEventListener("click", () => {
-  if (!window.confirm("Obnovit výchozí sadu kol? Aktuální seznam kol (i uložené úpravy) se ztratí.")) return;
-  seedDefaultBikes();
-  loadFormFromActive();
-  saveState();
-  render();
+resetBikesBtn.addEventListener("click", () => {
+  if (bikes.length === 0) return;
+  if (!window.confirm("Smazat všechna kola ze seznamu?")) return;
+  bikes = [];
+  activeId = null;
+  commitBikeSwitch();
 });
 
-document.getElementById("export-bikes").addEventListener("click", () => {
+exportBikesBtn.addEventListener("click", () => {
   const data = JSON.stringify({ bikes, activeId }, null, 2);
   const blob = new Blob([data], { type: "application/json" });
   const url = URL.createObjectURL(blob);
@@ -605,25 +616,24 @@ document.getElementById("export-bikes").addEventListener("click", () => {
   URL.revokeObjectURL(url);
 });
 
-document.getElementById("import-bikes").addEventListener("change", (e) => {
+// Shared by both the manual file-picker import and clicking a "+" in the
+// data-files catalog: merges the bikes it contains into the current list.
+function mergeImportedBikes(parsed) {
+  const importedRaw = Array.isArray(parsed) ? parsed : Array.isArray(parsed.bikes) ? parsed.bikes : null;
+  if (!importedRaw || !importedRaw.length) throw new Error("no bikes in data");
+  const imported = importedRaw.map((b) => normalizeBikeRecord({ ...b, name: (b && b.name) || "Importované kolo" }));
+  bikes = bikes.concat(imported);
+  activeId = imported[0].id;
+  commitBikeSwitch();
+}
+
+importBikesInput.addEventListener("change", (e) => {
   const file = e.target.files[0];
   if (!file) return;
   const reader = new FileReader();
   reader.onload = () => {
     try {
-      const parsed = JSON.parse(reader.result);
-      const importedRaw = Array.isArray(parsed) ? parsed : Array.isArray(parsed.bikes) ? parsed.bikes : null;
-      if (!importedRaw || !importedRaw.length) throw new Error("no bikes in file");
-      const imported = importedRaw.map((b) => ({
-        id: uid(),
-        name: (b && b.name) || "Importované kolo",
-        values: normalizeValues(b && b.values),
-      }));
-      bikes = bikes.concat(imported);
-      activeId = imported[0].id;
-      loadFormFromActive();
-      saveState();
-      render();
+      mergeImportedBikes(JSON.parse(reader.result));
     } catch (err) {
       window.alert("Soubor se nepodařilo načíst jako platný JSON export kol.");
     }
@@ -632,16 +642,95 @@ document.getElementById("import-bikes").addEventListener("change", (e) => {
   reader.readAsText(file);
 });
 
+// ---- Data files list ----
+//
+// bikes-config.js (loaded via a plain <script> tag before this file) sets
+// window.BIKE_GROUPS directly — a plain in-memory JS value, so this whole
+// section is synchronous. No fetch, no server, works straight off file://.
+
+function renderDataFileGroup(group) {
+  const label = group.label || "Kola";
+  const groupBikes = Array.isArray(group.bikes) ? group.bikes : [];
+  let expanded = false;
+
+  const bikesList = h("ul", { class: "data-file-bikes", hidden: true });
+  if (!groupBikes.length) {
+    bikesList.appendChild(h("li", { class: "data-file-bike-empty" }, ["(žádná kola v této kategorii)"]));
+  } else {
+    groupBikes.forEach((bikeRaw) => {
+      const name = (bikeRaw && bikeRaw.name) || "Kolo";
+      const addBtn = h(
+        "button",
+        { type: "button", class: "data-file-bike-add", title: `Přidat „${name}“`, onclick: () => mergeImportedBikes([bikeRaw]) },
+        ["+"]
+      );
+      bikesList.appendChild(h("li", { class: "data-file-bike-row" }, [h("span", { class: "data-file-bike-name" }, [name]), addBtn]));
+    });
+  }
+
+  const toggleBtn = h(
+    "button",
+    {
+      type: "button",
+      class: "data-file-toggle",
+      onclick: () => {
+        expanded = !expanded;
+        bikesList.hidden = !expanded;
+        toggleBtn.textContent = `${expanded ? "▾" : "▸"} ${label}`;
+      },
+    },
+    [`▸ ${label}`]
+  );
+
+  const addAllBtn = h(
+    "button",
+    {
+      type: "button",
+      class: "data-file-group-add",
+      title: `Přidat všechna kola ze skupiny „${label}“`,
+      disabled: groupBikes.length === 0,
+      onclick: () => mergeImportedBikes(groupBikes),
+    },
+    [`+ Přidat vše (${groupBikes.length})`]
+  );
+
+  const header = h("div", { class: "data-file-group-header" }, [toggleBtn, addAllBtn]);
+
+  return h("li", { class: "data-file-group" }, [header, bikesList]);
+}
+
+function renderDataFilesList(groups) {
+  dataFilesListEl.innerHTML = "";
+  dataFilesSectionEl.hidden = !groups || !groups.length;
+  if (dataFilesSectionEl.hidden) return;
+  groups.forEach((group) => dataFilesListEl.appendChild(renderDataFileGroup(group)));
+}
+
+if (Array.isArray(window.BIKE_GROUPS)) {
+  renderDataFilesList(window.BIKE_GROUPS);
+}
+
 form.addEventListener("input", () => {
   syncActiveFromForm();
-  saveState();
-  render();
+  commit();
 });
 
 // ---- Render ----
 
 function render() {
   const canvas = { w: 800, h: 600 };
+
+  if (bikes.length === 0) {
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    svg.setAttribute("viewBox", `0 0 ${canvas.w} ${canvas.h}`);
+    outSeatAngle.textContent = "–";
+    outInfo.textContent = "–";
+    outWheelbase.textContent = "–";
+    outForkLength.textContent = "–";
+    renderBikeList();
+    return;
+  }
+
   const entries = bikes.map((b) => ({ bike: b, geo: computeGeometry(b.values) }));
 
   const boundPoints = entries.flatMap(({ geo }) => bikeBoundPoints(geo));

@@ -117,6 +117,11 @@ input[type="number"]:focus {
   outline-offset: 1px;
 }
 
+input[type="number"]:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .extra {
   margin-top: 4px;
   border-top: 1px solid var(--border);
@@ -173,14 +178,128 @@ dd { margin: 0; font-weight: 600; text-align: right; }
   line-height: 1.4;
 }
 
-.bike-list {
+.bike-list,
+.data-files-list {
   list-style: none;
   margin: 0 0 10px;
   padding: 0;
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
   gap: 6px;
+}
+
+.bike-list {
+  flex-flow: row wrap;
+}
+
+.data-files-heading {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--muted);
+  margin: 4px 0 8px;
+}
+
+.data-files-list {
+  flex-direction: column;
+}
+
+.data-file-group {
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  padding: 2px 0;
+}
+
+.data-file-group-header {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding-right: 8px;
+}
+
+.data-file-toggle {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+  font: inherit;
+  font-size: 0.82rem;
+  color: var(--text);
+  background: none;
+  border: none;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.data-file-toggle:hover { color: var(--accent); }
+.data-file-toggle:disabled { opacity: 0.6; cursor: wait; }
+
+.data-file-group-add {
+  flex: none;
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border: none;
+  border-radius: 6px;
+  padding: 4px 8px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.data-file-group-add:hover { filter: brightness(0.95); }
+.data-file-group-add:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.data-file-bikes {
+  list-style: none;
+  margin: 0;
+  padding: 2px 10px 8px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.data-file-bikes[hidden] {
+  display: none;
+}
+
+.data-file-bike-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 3px 0;
+}
+
+.data-file-bike-name {
+  font-size: 0.8rem;
+  color: var(--text);
+}
+
+.data-file-bike-add {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  line-height: 1;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.data-file-bike-add:hover { filter: brightness(0.95); }
+
+.data-file-bike-empty {
+  font-size: 0.78rem;
+  color: var(--muted);
+  padding: 3px 0;
+}
+
+.bike-list-empty {
+  color: var(--muted);
+  font-size: 0.85rem;
 }
 
 .bike-row {

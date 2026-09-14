@@ -24,11 +24,20 @@
             Import JSON
             <input type="file" id="import-bikes" accept="application/json" hidden>
           </label>
-          <button type="button" id="reset-bikes" class="btn-secondary">Reset na výchozí kola</button>
+          <button type="button" id="reset-bikes" class="btn-secondary">Vymazat všechna kola</button>
         </div>
+
+        <div id="data-files-section" hidden>
+          <h3 class="data-files-heading">Datové soubory k dispozici</h3>
+          <ul id="data-files-list" class="data-files-list"></ul>
+        </div>
+
         <p class="note">
-          Aktivní kolo se kreslí plnou barvou a jde upravovat dole ve formuláři.
-          Ostatní kola se kreslí poloprůhledně na pozadí pro porovnání.
+          Appka po startu nemá žádné kolo načtené. Rozbal si kategorii výše
+          a tlačítkem „+“ přidej jednotlivá kola, přidej prázdné ručně, nebo
+          přes „Import JSON“ načti vlastní soubor. Aktivní kolo se kreslí
+          plnou barvou a jde upravovat dole ve formuláři, ostatní kola se
+          kreslí poloprůhledně na pozadí pro porovnání.
         </p>
       </section>
 
