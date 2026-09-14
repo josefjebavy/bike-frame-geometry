@@ -270,18 +270,24 @@ function dimLineV(group, y1, y2, x, text) {
 // technical-drawing dimension: short extension lines from the real points
 // out to a parallel dimension line, which carries the label) instead of
 // right on top of the measured segment — so it doesn't sit under the frame.
-function dimLineBetween(group, p1, p2, text, offset = 40) {
+function dimLineBetween(group, p1, p2, text, offset = 40, forcedDir = null) {
   const dx = p2.x - p1.x;
   const dy = p2.y - p1.y;
   const len = Math.hypot(dx, dy) || 1;
   const ux = dx / len;
   const uy = dy / len;
-  let nx = -uy;
-  let ny = ux;
-  if (ny > 0) {
-    nx = -nx;
-    ny = -ny;
-  } // keep the offset pointing up (smaller y), i.e. above the bike
+  let nx, ny;
+  if (forcedDir) {
+    nx = forcedDir.x;
+    ny = forcedDir.y;
+  } else {
+    nx = -uy;
+    ny = ux;
+    if (ny > 0) {
+      nx = -nx;
+      ny = -ny;
+    } // keep the offset pointing up (smaller y), i.e. above the bike
+  }
 
   const o1 = { x: p1.x + nx * offset, y: p1.y + ny * offset };
   const o2 = { x: p2.x + nx * offset, y: p2.y + ny * offset };
@@ -420,7 +426,7 @@ function drawSilhouette(container, proj, geo, opts) {
     dimLineH(dimGroup, ettPx.x, headPx.x, ettY, `ETT ${ettVal} mm`);
 
     dimLineBetween(dimGroup, saddleCenterPx, barEndPx, `Sedlo–řídítka ${Math.round(geo.saddleToBar)} mm`);
-    dimLineBetween(dimGroup, bbPx, seatTopPx, `Sedlová trubka ${seatTubeVal} mm`, 24);
+    dimLineBetween(dimGroup, bbPx, seatTopPx, `Sedlová trubka ${seatTubeVal} mm`, 30, { x: -1, y: 0 });
 
     g.appendChild(dimGroup);
   }
