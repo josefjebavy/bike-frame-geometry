@@ -7,10 +7,22 @@ const inputs = {
   stack: document.getElementById("stack"),
   ett: document.getElementById("ett"),
   seatTube: document.getElementById("seatTube"),
+  chainstay: document.getElementById("chainstay"),
+  bbDrop: document.getElementById("bbDrop"),
+  wheelDia: document.getElementById("wheelDia"),
+  headAngle: document.getElementById("headAngle"),
+  headTubeLen: document.getElementById("headTubeLen"),
+  forkLength: document.getElementById("forkLength"),
+  forkRake: document.getElementById("forkRake"),
+  stemLength: document.getElementById("stemLength"),
+  stemAngle: document.getElementById("stemAngle"),
+  saddleHeight: document.getElementById("saddleHeight"),
+  saddleSetback: document.getElementById("saddleSetback"),
 };
 
 const outSeatAngle = document.getElementById("out-seat-angle");
 const outInfo = document.getElementById("out-info");
+const outWheelbase = document.getElementById("out-wheelbase");
 
 form.addEventListener("input", render);
 
@@ -21,8 +33,8 @@ function el(tag, attrs = {}) {
 }
 
 /**
- * Geometry model:
- *  - BB is the origin.
+ * Main-triangle model (exact, from the 4 primary inputs):
+ *  - BB is the origin, +x points toward the front of the bike.
  *  - Head tube top sits at (reach, stack).
  *  - The seat tube centerline passes through BB and through the point
  *    where the effective top tube (horizontal, at head-top height)
@@ -30,23 +42,90 @@ function el(tag, attrs = {}) {
  *    without asking for it separately.
  *  - The actual top of the seat tube is `seatTube` mm from BB along
  *    that same centerline.
+ *
+ * Everything below (wheels, fork, stem, bars, saddle) is a secondary,
+ * orientational silhouette built from the extra inputs — real frames
+ * vary a lot in these, they're not implied by reach/stack/ett/seat tube.
  */
-function computeGeometry({ reach, stack, ett, seatTube }) {
+function computeGeometry(v) {
   const bb = { x: 0, y: 0 };
-  const headTop = { x: reach, y: stack };
+  const headTop = { x: v.reach, y: v.stack };
 
-  const px = reach - ett;
-  const py = stack;
+  const px = v.reach - v.ett;
+  const py = v.stack;
   const centerlineLen = Math.hypot(px, py) || 1;
-  const dirX = px / centerlineLen;
-  const dirY = py / centerlineLen;
+  const seatDirX = px / centerlineLen;
+  const seatDirY = py / centerlineLen;
 
   const ettPoint = { x: px, y: py };
-  const seatTop = { x: dirX * seatTube, y: dirY * seatTube };
-
+  const seatTop = { x: seatDirX * v.seatTube, y: seatDirY * v.seatTube };
   const seatAngleDeg = (Math.atan2(py, -px) * 180) / Math.PI;
 
-  return { bb, headTop, ettPoint, seatTop, seatAngleDeg };
+  // Rear axle: chainstay length + BB drop fix it relative to BB.
+  const csHoriz = Math.sqrt(Math.max(v.chainstay * v.chainstay - v.bbDrop * v.bbDrop, 0));
+  const rearAxle = { x: -csHoriz, y: v.bbDrop };
+
+  // Head tube bottom, along the head angle from head tube top.
+  const headRad = (v.headAngle * Math.PI) / 180;
+  const headDir = { x: Math.cos(headRad), y: -Math.sin(headRad) };
+  const headBottom = {
+    x: headTop.x + v.headTubeLen * headDir.x,
+    y: headTop.y + v.headTubeLen * headDir.y,
+  };
+
+  // Front axle: extend the steering axis, then offset by fork rake.
+  const axisLen = Math.sqrt(Math.max(v.forkLength * v.forkLength - v.forkRake * v.forkRake, 0));
+  const forkPerp = { x: Math.sin(headRad), y: Math.cos(headRad) };
+  const frontAxle = {
+    x: headBottom.x + axisLen * headDir.x + v.forkRake * forkPerp.x,
+    y: headBottom.y + axisLen * headDir.y + v.forkRake * forkPerp.y,
+  };
+
+  const wheelRadius = v.wheelDia / 2;
+  const groundY = (rearAxle.y - wheelRadius + (frontAxle.y - wheelRadius)) / 2;
+
+  // Stem, from the head tube top.
+  const stemRad = (v.stemAngle * Math.PI) / 180;
+  const stemEnd = {
+    x: headTop.x + v.stemLength * Math.cos(stemRad),
+    y: headTop.y + v.stemLength * Math.sin(stemRad),
+  };
+
+  // Handlebar: a simple drop-bar silhouette, fixed proportions (decorative).
+  const barRise = 25;
+  const barReach = 70;
+  const barDrop = 90;
+  const barClamp = { x: stemEnd.x, y: stemEnd.y + barRise };
+  const barTop = { x: barClamp.x + barReach, y: barClamp.y };
+  const barDropPt = { x: barTop.x, y: barTop.y - barDrop };
+
+  // Saddle, along the seat tube centerline extended, then set back.
+  const saddleBase = {
+    x: seatTop.x + seatDirX * v.saddleHeight,
+    y: seatTop.y + seatDirY * v.saddleHeight,
+  };
+  const saddleCenter = { x: saddleBase.x - v.saddleSetback, y: saddleBase.y };
+
+  const wheelbase = frontAxle.x - rearAxle.x;
+
+  return {
+    bb,
+    headTop,
+    ettPoint,
+    seatTop,
+    seatAngleDeg,
+    rearAxle,
+    headBottom,
+    frontAxle,
+    wheelRadius,
+    groundY,
+    stemEnd,
+    barClamp,
+    barTop,
+    barDropPt,
+    saddleCenter,
+    wheelbase,
+  };
 }
 
 function project(points, canvas) {
@@ -82,6 +161,15 @@ function project(points, canvas) {
   }
 
   return { toPx, minX, maxX, minY, maxY, scale };
+}
+
+function circleBounds(center, r) {
+  return [
+    { x: center.x - r, y: center.y },
+    { x: center.x + r, y: center.y },
+    { x: center.x, y: center.y - r },
+    { x: center.x, y: center.y + r },
+  ];
 }
 
 function dimLineH(group, x1, x2, y, label) {
@@ -124,22 +212,66 @@ function drawGrid(group, canvas, stepPx) {
   }
 }
 
+function label(x, y, text, anchor = "start") {
+  const t = el("text", { class: "point-label", x, y, "text-anchor": anchor });
+  t.textContent = text;
+  return t;
+}
+
 function render() {
   const values = {
     reach: parseFloat(inputs.reach.value) || 0,
     stack: parseFloat(inputs.stack.value) || 0,
     ett: parseFloat(inputs.ett.value) || 0,
     seatTube: parseFloat(inputs.seatTube.value) || 0,
+    chainstay: parseFloat(inputs.chainstay.value) || 1,
+    bbDrop: parseFloat(inputs.bbDrop.value) || 0,
+    wheelDia: parseFloat(inputs.wheelDia.value) || 1,
+    headAngle: parseFloat(inputs.headAngle.value) || 73,
+    headTubeLen: parseFloat(inputs.headTubeLen.value) || 0,
+    forkLength: parseFloat(inputs.forkLength.value) || 1,
+    forkRake: parseFloat(inputs.forkRake.value) || 0,
+    stemLength: parseFloat(inputs.stemLength.value) || 0,
+    stemAngle: parseFloat(inputs.stemAngle.value) || 0,
+    saddleHeight: parseFloat(inputs.saddleHeight.value) || 0,
+    saddleSetback: parseFloat(inputs.saddleSetback.value) || 0,
   };
 
   const geo = computeGeometry(values);
   const canvas = { w: 800, h: 600 };
-  const proj = project([geo.bb, geo.headTop, geo.seatTop, geo.ettPoint], canvas);
 
-  const bbPx = proj.toPx(geo.bb);
-  const headPx = proj.toPx(geo.headTop);
-  const seatTopPx = proj.toPx(geo.seatTop);
-  const ettPx = proj.toPx(geo.ettPoint);
+  const boundPoints = [
+    geo.bb,
+    geo.headTop,
+    geo.seatTop,
+    geo.ettPoint,
+    geo.headBottom,
+    geo.stemEnd,
+    geo.barClamp,
+    geo.barTop,
+    geo.barDropPt,
+    { x: geo.saddleCenter.x - 70, y: geo.saddleCenter.y },
+    { x: geo.saddleCenter.x + 70, y: geo.saddleCenter.y },
+    ...circleBounds(geo.rearAxle, geo.wheelRadius),
+    ...circleBounds(geo.frontAxle, geo.wheelRadius),
+  ];
+
+  const proj = project(boundPoints, canvas);
+  const px = (p) => proj.toPx(p);
+
+  const bbPx = px(geo.bb);
+  const headPx = px(geo.headTop);
+  const seatTopPx = px(geo.seatTop);
+  const ettPx = px(geo.ettPoint);
+  const rearAxlePx = px(geo.rearAxle);
+  const frontAxlePx = px(geo.frontAxle);
+  const headBottomPx = px(geo.headBottom);
+  const stemEndPx = px(geo.stemEnd);
+  const barClampPx = px(geo.barClamp);
+  const barTopPx = px(geo.barTop);
+  const barDropPx = px(geo.barDropPt);
+  const saddleCenterPx = px(geo.saddleCenter);
+  const wheelRPx = geo.wheelRadius * proj.scale;
 
   while (svg.firstChild) svg.removeChild(svg.firstChild);
   svg.setAttribute("viewBox", `0 0 ${canvas.w} ${canvas.h}`);
@@ -148,70 +280,86 @@ function render() {
   drawGrid(gridGroup, canvas, proj.scale * 50 > 15 ? proj.scale * 50 : proj.scale * 100);
   svg.appendChild(gridGroup);
 
-  // ETT reference (dashed horizontal, actual measured dimension)
-  svg.appendChild(
-    el("line", {
-      class: "tube tube-ett",
-      x1: ettPx.x,
-      y1: ettPx.y,
-      x2: headPx.x,
-      y2: headPx.y,
-    })
-  );
+  // Ground line
+  const groundPx = px({ x: proj.minX, y: geo.groundY });
+  const groundPx2 = px({ x: proj.maxX, y: geo.groundY });
+  svg.appendChild(el("line", { class: "ground-line", x1: groundPx.x, y1: groundPx.y, x2: groundPx2.x, y2: groundPx2.y }));
 
-  // Main triangle edges
-  svg.appendChild(el("line", { class: "tube tube-down", x1: bbPx.x, y1: bbPx.y, x2: headPx.x, y2: headPx.y }));
+  // Wheels
+  svg.appendChild(el("circle", { class: "wheel", cx: rearAxlePx.x, cy: rearAxlePx.y, r: wheelRPx }));
+  svg.appendChild(el("circle", { class: "wheel", cx: frontAxlePx.x, cy: frontAxlePx.y, r: wheelRPx }));
+  svg.appendChild(el("circle", { class: "hub", cx: rearAxlePx.x, cy: rearAxlePx.y, r: 4 }));
+  svg.appendChild(el("circle", { class: "hub", cx: frontAxlePx.x, cy: frontAxlePx.y, r: 4 }));
+
+  // Rear triangle: chainstay + seatstay
+  svg.appendChild(el("line", { class: "tube-stay", x1: bbPx.x, y1: bbPx.y, x2: rearAxlePx.x, y2: rearAxlePx.y }));
+  svg.appendChild(el("line", { class: "tube-stay", x1: seatTopPx.x, y1: seatTopPx.y, x2: rearAxlePx.x, y2: rearAxlePx.y }));
+
+  // Fork
+  svg.appendChild(el("line", { class: "tube-fork", x1: headBottomPx.x, y1: headBottomPx.y, x2: frontAxlePx.x, y2: frontAxlePx.y }));
+
+  // ETT reference (dashed horizontal, actual measured dimension)
+  svg.appendChild(el("line", { class: "tube tube-ett", x1: ettPx.x, y1: ettPx.y, x2: headPx.x, y2: headPx.y }));
+
+  // Main triangle: down tube (BB->head bottom), head tube, top tube, seat tube
+  svg.appendChild(el("line", { class: "tube tube-down", x1: bbPx.x, y1: bbPx.y, x2: headBottomPx.x, y2: headBottomPx.y }));
+  svg.appendChild(el("line", { class: "tube tube-main", x1: headPx.x, y1: headPx.y, x2: headBottomPx.x, y2: headBottomPx.y }));
   svg.appendChild(el("line", { class: "tube tube-top", x1: headPx.x, y1: headPx.y, x2: seatTopPx.x, y2: seatTopPx.y }));
   svg.appendChild(el("line", { class: "tube tube-seat", x1: bbPx.x, y1: bbPx.y, x2: seatTopPx.x, y2: seatTopPx.y }));
 
+  // Stem + handlebar
+  svg.appendChild(el("line", { class: "tube-cockpit", x1: headPx.x, y1: headPx.y, x2: stemEndPx.x, y2: stemEndPx.y }));
+  const barPoints = [stemEndPx, barClampPx, barTopPx, barDropPx].map((p) => `${p.x},${p.y}`).join(" ");
+  svg.appendChild(el("polyline", { class: "tube-cockpit", points: barPoints }));
+
+  // Saddle
+  svg.appendChild(
+    el("line", {
+      class: "saddle-line",
+      x1: saddleCenterPx.x - 60,
+      y1: saddleCenterPx.y,
+      x2: saddleCenterPx.x + 60,
+      y2: saddleCenterPx.y,
+    })
+  );
+
   // Joints
-  for (const p of [bbPx, headPx, seatTopPx]) {
+  for (const p of [bbPx, headPx, seatTopPx, headBottomPx]) {
     svg.appendChild(el("circle", { class: "joint", cx: p.x, cy: p.y, r: 6 }));
   }
 
-  // Point labels
-  const bbLabel = el("text", { class: "point-label", x: bbPx.x - 10, y: bbPx.y + 20, "text-anchor": "middle" });
-  bbLabel.textContent = "BB";
-  svg.appendChild(bbLabel);
+  // Labels
+  svg.appendChild(label(bbPx.x - 10, bbPx.y + 20, "BB", "middle"));
+  svg.appendChild(label(headPx.x + 8, headPx.y - 10, "Hlavová trubka"));
+  svg.appendChild(label(seatTopPx.x - 8, seatTopPx.y - 10, "Vršek sedlovky", "end"));
+  svg.appendChild(label(rearAxlePx.x, rearAxlePx.y + wheelRPx + 16, "Zadní kolo", "middle"));
+  svg.appendChild(label(frontAxlePx.x, frontAxlePx.y + wheelRPx + 16, "Přední kolo", "middle"));
+  svg.appendChild(label(saddleCenterPx.x, saddleCenterPx.y - 12, "Sedlo", "middle"));
+  svg.appendChild(label(barTopPx.x + 8, barTopPx.y - 6, "Řídítka"));
 
-  const headLabel = el("text", { class: "point-label", x: headPx.x + 8, y: headPx.y - 10 });
-  headLabel.textContent = "Hlavová trubka";
-  svg.appendChild(headLabel);
-
-  const seatLabel = el("text", { class: "point-label", x: seatTopPx.x - 8, y: seatTopPx.y - 10, "text-anchor": "end" });
-  seatLabel.textContent = "Vršek sedlovky";
-  svg.appendChild(seatLabel);
-
-  // Dimension lines
+  // Dimension lines (primary 4 inputs)
   const dimGroup = el("g");
 
-  // Reach: horizontal, below the lowest point
-  const reachY = Math.max(bbPx.y, headPx.y, seatTopPx.y, ettPx.y) + 45;
+  const reachY = Math.max(bbPx.y, headPx.y) + 30;
   dimLineH(dimGroup, bbPx.x, headPx.x, reachY, `Reach ${values.reach} mm`);
 
-  // Stack: vertical, left of the leftmost point
-  const stackX = Math.min(bbPx.x, headPx.x, seatTopPx.x, ettPx.x) - 45;
+  const stackX = Math.min(bbPx.x, headPx.x) - 30;
   dimLineV(dimGroup, bbPx.y, headPx.y, stackX, `Stack ${values.stack} mm`);
 
-  // Effective top tube: horizontal, above the topmost point
-  const ettY = Math.min(bbPx.y, headPx.y, seatTopPx.y, ettPx.y) - 25;
+  const ettY = Math.min(ettPx.y, headPx.y) - 20;
   dimLineH(dimGroup, ettPx.x, headPx.x, ettY, `ETT ${values.ett} mm`);
 
   svg.appendChild(dimGroup);
 
-  // Seat tube length label along the tube
   const seatMid = { x: (bbPx.x + seatTopPx.x) / 2, y: (bbPx.y + seatTopPx.y) / 2 };
-  const seatLenLabel = el("text", {
-    class: "dim-label",
-    x: seatMid.x + 10,
-    y: seatMid.y,
-  });
+  const seatLenLabel = el("text", { class: "dim-label", x: seatMid.x + 10, y: seatMid.y });
   seatLenLabel.textContent = `${values.seatTube} mm`;
   svg.appendChild(seatLenLabel);
 
   outSeatAngle.textContent = `${geo.seatAngleDeg.toFixed(1)}°`;
   const frontLen = Math.hypot(geo.headTop.x - geo.bb.x, geo.headTop.y - geo.bb.y);
   outInfo.textContent = `${frontLen.toFixed(0)} mm`;
+  outWheelbase.textContent = `${geo.wheelbase.toFixed(0)} mm`;
 }
 
 render();

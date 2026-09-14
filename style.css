@@ -12,6 +12,12 @@
   --tube-top: #3f6b4d;
   --tube-down: #35577d;
   --dim: #767468;
+  --wheel: #55524a;
+  --fork: #35577d;
+  --stay: #8a5a2b;
+  --cockpit: #6a4c93;
+  --saddle: #2b2a27;
+  --ground: #c9c6bb;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -29,6 +35,12 @@
     --tube-top: #7fbf94;
     --tube-down: #7fa8d9;
     --dim: #a6a396;
+    --wheel: #c9c6bb;
+    --fork: #7fa8d9;
+    --stay: #d1a05f;
+    --cockpit: #b79ce0;
+    --saddle: #ecebe6;
+    --ground: #46443b;
   }
 }
 
@@ -109,6 +121,30 @@ input[type="number"]:focus {
   outline-offset: 1px;
 }
 
+.extra {
+  margin-top: 4px;
+  border-top: 1px solid var(--border);
+  padding-top: 10px;
+}
+
+.extra summary {
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.extra-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.extra-grid label {
+  font-size: 0.78rem;
+}
+
 .derived {
   margin-top: 20px;
   padding-top: 16px;
@@ -167,6 +203,14 @@ dd { margin: 0; font-weight: 600; text-align: right; }
 .tube-ett { stroke: var(--dim); stroke-width: 1.5; stroke-dasharray: 4 4; }
 
 .joint { fill: var(--panel-bg); stroke: var(--tube); stroke-width: 2; }
+
+.wheel { fill: none; stroke: var(--wheel); stroke-width: 3; }
+.hub { fill: var(--wheel); }
+.ground-line { stroke: var(--ground); stroke-width: 2; stroke-dasharray: 2 5; }
+.tube-fork { stroke: var(--fork); stroke-width: 5; fill: none; stroke-linecap: round; }
+.tube-stay { stroke: var(--stay); stroke-width: 4; fill: none; stroke-linecap: round; }
+.tube-cockpit { stroke: var(--cockpit); stroke-width: 4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.saddle-line { stroke: var(--saddle); stroke-width: 9; stroke-linecap: round; }
 
 .dim-line { stroke: var(--dim); stroke-width: 1; }
 .dim-label {

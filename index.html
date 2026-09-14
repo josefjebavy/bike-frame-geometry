@@ -10,7 +10,7 @@
   <div class="app">
     <header>
       <h1>Vizualizace geometrie rámu kola</h1>
-      <p class="subtitle">Zadej klíčové rozměry a app vykreslí hlavní trojúhelník rámu.</p>
+      <p class="subtitle">Zadej klíčové rozměry a app vykreslí hlavní trojúhelník rámu i orientační siluetu celého kola.</p>
     </header>
 
     <main>
@@ -33,6 +33,56 @@
             Délka sedlové trubky (mm, BB–horní hrana)
             <input type="number" id="seatTube" step="1" value="520">
           </label>
+
+          <details class="extra" open>
+            <summary>Doplňkové rozměry (orientační silueta)</summary>
+            <div class="extra-grid">
+              <label>
+                Rozteč zadní stavby (mm)
+                <input type="number" id="chainstay" step="1" value="410">
+              </label>
+              <label>
+                Pokles středu / BB drop (mm)
+                <input type="number" id="bbDrop" step="1" value="70">
+              </label>
+              <label>
+                Průměr kol (mm)
+                <input type="number" id="wheelDia" step="1" value="700">
+              </label>
+              <label>
+                Úhel hlavové trubky (°)
+                <input type="number" id="headAngle" step="0.1" value="73">
+              </label>
+              <label>
+                Délka hlavové trubky (mm)
+                <input type="number" id="headTubeLen" step="1" value="150">
+              </label>
+              <label>
+                Délka vidlice, osa–koruna (mm)
+                <input type="number" id="forkLength" step="1" value="368">
+              </label>
+              <label>
+                Offset (rake) vidlice (mm)
+                <input type="number" id="forkRake" step="1" value="45">
+              </label>
+              <label>
+                Délka představce (mm)
+                <input type="number" id="stemLength" step="1" value="100">
+              </label>
+              <label>
+                Úhel představce (°, + nahoru)
+                <input type="number" id="stemAngle" step="1" value="-7">
+              </label>
+              <label>
+                Výška sedla nad rámem (mm)
+                <input type="number" id="saddleHeight" step="1" value="100">
+              </label>
+              <label>
+                Posun sedla dozadu (mm)
+                <input type="number" id="saddleSetback" step="1" value="20">
+              </label>
+            </div>
+          </details>
         </form>
 
         <div class="derived">
@@ -42,11 +92,16 @@
             <dd id="out-seat-angle">–</dd>
             <dt>Délka horní trubky (BB→hlava→sedlovka, přímka)</dt>
             <dd id="out-info">–</dd>
+            <dt>Rozvor (wheelbase)</dt>
+            <dd id="out-wheelbase">–</dd>
           </dl>
           <p class="note">
             Sedlová trubka je vedena z BB přes bod, kde ji ve výšce
             stacku protíná effective top tube; úhel sedlovky je z toho
-            dopočítán, ne zadáván.
+            dopočítán, ne zadáván. Kola, vidlice, představec, řídítka
+            a sedlo jsou orientační silueta z doplňkových rozměrů —
+            nejsou odvozené z hlavních 4 hodnot, takže u výchozích čísel
+            se kola mohou o pár mm lišit od společné zemní linky.
           </p>
         </div>
       </section>
