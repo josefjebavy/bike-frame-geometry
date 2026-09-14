@@ -74,6 +74,14 @@ main {
   display: grid;
   grid-template-columns: 280px 1fr;
   gap: 20px;
+  align-items: start;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
 }
 
 @media (max-width: 720px) {
@@ -177,6 +185,99 @@ dd { margin: 0; font-weight: 600; text-align: right; }
   line-height: 1.4;
 }
 
+.bike-list {
+  list-style: none;
+  margin: 0 0 10px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.bike-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 5px 6px;
+}
+
+.bike-row.active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.bike-swatch {
+  width: 10px;
+  height: 10px;
+  min-width: 10px;
+  border-radius: 50%;
+}
+
+.bike-select {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+  background: none;
+  border: none;
+  font: inherit;
+  font-size: 0.85rem;
+  color: var(--text);
+  cursor: pointer;
+  padding: 2px 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bike-icon-btn {
+  border: none;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 0.85rem;
+  line-height: 1;
+  padding: 3px 5px;
+  border-radius: 4px;
+}
+
+.bike-icon-btn:hover { background: var(--border); color: var(--text); }
+.bike-icon-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.bike-icon-btn:disabled:hover { background: none; }
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font: inherit;
+  font-size: 0.8rem;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 7px 8px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.btn-secondary:hover { border-color: var(--accent); }
+
+.btn-block {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.bike-io {
+  display: flex;
+  gap: 8px;
+}
+
+.bike-io > * {
+  flex: 1;
+  min-width: 0;
+}
+
 .canvas-wrap {
   background: var(--panel-bg);
   border: 1px solid var(--border);
@@ -224,5 +325,13 @@ dd { margin: 0; font-weight: 600; text-align: right; }
 .point-label {
   fill: var(--text);
   font-size: 11px;
+  font-weight: 600;
+}
+
+.ghost-group { opacity: 0.55; }
+.ghost-line { fill: none; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+.ghost-wheel { fill: none; stroke-width: 2; }
+.ghost-label {
+  font-size: 10px;
   font-weight: 600;
 }

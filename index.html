@@ -10,12 +10,30 @@
   <div class="app">
     <header>
       <h1>Vizualizace geometrie rámu kola</h1>
-      <p class="subtitle">Zadej klíčové rozměry a app vykreslí hlavní trojúhelník rámu i orientační siluetu celého kola.</p>
+      <p class="subtitle">Zadej klíčové rozměry a app vykreslí hlavní trojúhelník rámu i orientační siluetu celého kola. Můžeš mít zadaných víc kol najednou a porovnávat je přes sebe.</p>
     </header>
 
     <main>
+      <div class="sidebar">
+      <section class="panel bikes-panel">
+        <h2>Kola</h2>
+        <ul id="bike-list" class="bike-list"></ul>
+        <button type="button" id="add-bike" class="btn-secondary btn-block">+ Přidat kolo</button>
+        <div class="bike-io">
+          <button type="button" id="export-bikes" class="btn-secondary">Export JSON</button>
+          <label class="btn-secondary file-label">
+            Import JSON
+            <input type="file" id="import-bikes" accept="application/json" hidden>
+          </label>
+        </div>
+        <p class="note">
+          Aktivní kolo se kreslí plnou barvou a jde upravovat vlevo dole.
+          Ostatní kola se kreslí poloprůhledně na pozadí pro porovnání.
+        </p>
+      </section>
+
       <section class="panel">
-        <h2>Rozměry</h2>
+        <h2>Rozměry (aktivní kolo)</h2>
         <form id="geo-form">
           <label>
             Reach (mm)
@@ -104,6 +122,7 @@
           </p>
         </div>
       </section>
+      </div>
 
       <section class="canvas-wrap">
         <svg id="frame-svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid meet"></svg>
