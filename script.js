@@ -704,12 +704,12 @@ function renderDataFileGroup(group) {
   } else {
     groupBikes.forEach((bikeRaw) => {
       const name = (bikeRaw && bikeRaw.name) || "Kolo";
-      const addBtn = h(
+      const nameBtn = h(
         "button",
-        { type: "button", class: "data-file-bike-add", title: `Přidat „${name}“`, onclick: () => mergeImportedBikes([bikeRaw]) },
-        ["+"]
+        { type: "button", class: "data-file-bike-name", title: `Přidat „${name}“`, onclick: () => mergeImportedBikes([bikeRaw]) },
+        [name]
       );
-      bikesList.appendChild(h("li", { class: "data-file-bike-row" }, [h("span", { class: "data-file-bike-name" }, [name]), addBtn]));
+      bikesList.appendChild(h("li", { class: "data-file-bike-row" }, [nameBtn]));
     });
   }
 

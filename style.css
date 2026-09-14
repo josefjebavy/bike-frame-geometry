@@ -289,33 +289,24 @@ dd { margin: 0; font-weight: 600; text-align: right; }
 }
 
 .data-file-bike-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 3px 0;
+  padding: 2px 0;
 }
 
 .data-file-bike-name {
+  display: block;
+  width: 100%;
+  text-align: left;
+  font: inherit;
   font-size: 0.8rem;
   color: var(--text);
-}
-
-.data-file-bike-add {
-  flex: none;
-  width: 22px;
-  height: 22px;
-  line-height: 1;
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: var(--accent);
-  background: var(--accent-soft);
-  border: none;
+  background: var(--bg);
+  border: 1px solid var(--border);
   border-radius: 6px;
+  padding: 5px 8px;
   cursor: pointer;
 }
 
-.data-file-bike-add:hover { filter: brightness(0.95); }
+.data-file-bike-name:hover { border-color: var(--accent); color: var(--accent); }
 
 .data-file-bike-empty {
   font-size: 0.78rem;
