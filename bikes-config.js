@@ -225,6 +225,29 @@ window.BIKE_GROUPS = [
           "forkRake": 46
         }
       },
+      // Source: frame/scott-rahmenset-29-scale-rc-world-cup-hmx-2026~5.webp —
+      // manufacturer geometry chart, column XL/900. "BB OFFSET" (E) = -62.0mm
+      // taken as bbDrop=62; "BB CENTER TO TOP OF SEATTUBE" (I) used as
+      // seatTube. No fork rake given on this chart.
+      {
+        "brand": "Scott",
+        "velikost": "XL",
+        "typ": "mtb",
+        "name": "Scott Scale RC World Cup HMX (XL, 29\")",
+        "values": {
+          "reach": 491.2,
+          "stack": 628.1,
+          "ett": 656.5,
+          "seatTube": 530,
+          "chainstay": 425,
+          "bbDrop": 62,
+          "wheelDia": 737,
+          "headAngle": 67.9,
+          "headTubeLen": 120,
+          "spacerHeight": 20,
+          "stemLength": 80
+        }
+      },
       {
         "brand": "Canyon",
         "velikost": "XL",
