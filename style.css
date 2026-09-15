@@ -443,8 +443,24 @@ dd { margin: 0; font-weight: 600; text-align: right; }
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 10px;
-  min-height: 480px;
+  aspect-ratio: 4 / 3;
   display: flex;
+}
+
+@media (max-width: 600px) {
+  .app {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .canvas-wrap {
+    padding: 6px 0;
+    margin-left: -8px;
+    margin-right: -8px;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
 }
 
 .align-hint {
@@ -461,8 +477,7 @@ dd { margin: 0; font-weight: 600; text-align: right; }
 
 #frame-svg {
   width: 100%;
-  height: auto;
-  min-height: 460px;
+  height: 100%;
 }
 
 .grid-line { stroke: var(--grid); stroke-width: 1; }
