@@ -46,11 +46,13 @@ stemHeightInput.value = STEM_HEIGHT;
 
 const GHOST_PALETTE = ["#b3441f", "#3f6b4d", "#35577d", "#8a5a2b", "#6a4c93", "#a44a74"];
 const STORAGE_KEY = "bike-frame-geometry:bikes:v1";
+const FORM_UPDATE_DEBOUNCE_MS = 120;
 
 const inputs = Object.fromEntries(FIELD_KEYS.map((k) => [k, document.getElementById(k)]));
 
 let bikes = [];
 let activeId = null;
+let pendingFormCommitTimer = null;
 
 // Which point every bike's frame gets aligned on when drawn together. Click
 // one of the 4 joint dots on the active frame to change it — every bike's
@@ -674,8 +676,20 @@ function syncActiveFromForm() {
 
 // Persist + redraw — every mutation to `bikes`/`activeId` ends with this.
 function commit() {
+  if (pendingFormCommitTimer) {
+    clearTimeout(pendingFormCommitTimer);
+    pendingFormCommitTimer = null;
+  }
   saveState();
   render();
+}
+
+function scheduleFormCommit() {
+  if (pendingFormCommitTimer) clearTimeout(pendingFormCommitTimer);
+  pendingFormCommitTimer = setTimeout(() => {
+    pendingFormCommitTimer = null;
+    commit();
+  }, FORM_UPDATE_DEBOUNCE_MS);
 }
 
 // Same, plus refreshing the form to match the (possibly new) active bike —
@@ -911,7 +925,7 @@ if (Array.isArray(window.BIKE_GROUPS)) {
 
 form.addEventListener("input", () => {
   syncActiveFromForm();
-  commit();
+  scheduleFormCommit();
 });
 
 alignResetBtn.addEventListener("click", () => {
