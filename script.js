@@ -599,6 +599,27 @@ function normalizeBikeRecord(b) {
   };
 }
 
+// Preloaded on a genuinely first run (no saved state yet) — a small default
+// comparison set pulled from the bikes-config.js catalog. Matched by exact
+// catalog `name`; any that isn't found (e.g. catalog changed) is silently
+// skipped rather than blocking startup.
+const DEFAULT_BIKE_NAMES = [
+  "Canyon Grand Canyon AL 7 (XL)",
+  "Duratec Torain C1 (custom, 29\")",
+  "Cube Reaction (XXL, 29\")",
+];
+
+// Returns [{ raw, bike }] — `raw` is the original bikes-config.js object
+// (needed to mark its catalog row as already-added), `bike` the normalized
+// record with a fresh id.
+function defaultCatalogBikes() {
+  const groups = Array.isArray(window.BIKE_GROUPS) ? window.BIKE_GROUPS : [];
+  const all = groups.flatMap((g) => (Array.isArray(g.bikes) ? g.bikes : []));
+  return DEFAULT_BIKE_NAMES.map((name) => all.find((b) => b && b.name === name))
+    .filter(Boolean)
+    .map((raw) => ({ raw, bike: normalizeBikeRecord({ ...raw }) }));
+}
+
 function loadState() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -614,10 +635,11 @@ function loadState() {
     /* corrupt or unavailable storage: fall back below */
   }
 
-  // First run: the app starts with no bikes loaded. Add one manually or
-  // use "Import JSON" to load a data file (e.g. data/mtb-XL.json).
-  bikes = [];
-  activeId = null;
+  // First run: preload a default comparison set from the catalog.
+  const defaults = defaultCatalogBikes();
+  bikes = defaults.map((d) => d.bike);
+  activeId = bikes[0] ? bikes[0].id : null;
+  defaults.forEach((d) => trackCatalogAdd(d.raw, [d.bike.id]));
 }
 
 function saveState() {
