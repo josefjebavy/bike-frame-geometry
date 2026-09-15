@@ -389,6 +389,29 @@ window.BIKE_GROUPS = [
           "spacerHeight": 20,
           "stemLength": 80
         }
+      },
+      // Source: frame/new3/002-rose-pdq-2.png — screenshot of the geometry
+      // table on rosebikes.com/p/rose-pdq-2-2701985?size=XL, column XL.
+      // "B Top tube length" used as ett (no separate effective/horizontal
+      // row on this chart); "P Fork offset" used as forkRake.
+      {
+        "brand": "Rose",
+        "velikost": "XL",
+        "typ": "mtb",
+        "name": "Rose PDQ 2 (XL)",
+        "values": {
+          "reach": 500,
+          "stack": 643,
+          "ett": 672,
+          "seatTube": 510,
+          "chainstay": 430,
+          "bbDrop": 63,
+          "wheelDia": 737,
+          "headAngle": 67.5,
+          "headTubeLen": 110,
+          "spacerHeight": 20,
+          "forkRake": 44
+        }
       }
     ]
   },
@@ -646,36 +669,6 @@ window.BIKE_GROUPS = [
           "headTubeLen": 156,
           "spacerHeight": 20,
           "forkRake": 45
-        }
-      }
-    ]
-  },
-  {
-    "label": "Gravel – XL",
-    "bikes": [
-      // Source: frame/new3/002-rose-pdq-2.png — screenshot of the geometry
-      // table on rosebikes.com/p/rose-pdq-2-2701985?size=XL, column XL.
-      // "B Top tube length" used as ett (no separate effective/horizontal
-      // row on this chart); "P Fork offset" used as forkRake. wheelDia
-      // taken as 737 (chart calls it "29\"", same convention as this file's
-      // other 29" entries) even though PDQ 2 is a gravel bike.
-      {
-        "brand": "Rose",
-        "velikost": "XL",
-        "typ": "gravel",
-        "name": "Rose PDQ 2 (XL)",
-        "values": {
-          "reach": 500,
-          "stack": 643,
-          "ett": 672,
-          "seatTube": 510,
-          "chainstay": 430,
-          "bbDrop": 63,
-          "wheelDia": 737,
-          "headAngle": 67.5,
-          "headTubeLen": 110,
-          "spacerHeight": 20,
-          "forkRake": 44
         }
       }
     ]
