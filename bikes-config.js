@@ -24,6 +24,27 @@ window.BIKE_GROUPS = [
           "spacerHeight": 20
         }
       },
+      // Source: frame/new3/cube-reaction-c-62-pro.png — manufacturer
+      // geometry chart, column XL. "Top Tube Horizontal" used as ett;
+      // "BB-Height to Hub" used as bbDrop.
+      {
+        "brand": "Cube",
+        "velikost": "XL",
+        "typ": "mtb",
+        "name": "Cube Reaction C:62 Pro (CF, XL, 29\")",
+        "values": {
+          "reach": 456,
+          "stack": 639,
+          "ett": 638,
+          "seatTube": 510,
+          "chainstay": 426,
+          "bbDrop": 65,
+          "wheelDia": 737,
+          "headAngle": 68.5,
+          "headTubeLen": 127,
+          "spacerHeight": 20
+        }
+      },
       {
         "brand": "KTM",
         "velikost": "XL",
@@ -455,6 +476,26 @@ window.BIKE_GROUPS = [
           "wheelDia": 737,
           "headAngle": 68.5,
           "headTubeLen": 156.8,
+          "spacerHeight": 20
+        }
+      },
+      // Source: frame/new3/cube-reaction-c-62-pro.png — manufacturer
+      // geometry chart, column XXL. Same notes as the XL entry above.
+      {
+        "brand": "Cube",
+        "velikost": "XXL",
+        "typ": "mtb",
+        "name": "Cube Reaction C:62 Pro (CF, XXL, 29\")",
+        "values": {
+          "reach": 472,
+          "stack": 653,
+          "ett": 658,
+          "seatTube": 560,
+          "chainstay": 426,
+          "bbDrop": 65,
+          "wheelDia": 737,
+          "headAngle": 68.5,
+          "headTubeLen": 142,
           "spacerHeight": 20
         }
       },
