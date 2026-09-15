@@ -10,7 +10,7 @@ window.BIKE_GROUPS = [
         "brand": "Cube",
         "velikost": "XL",
         "typ": "mtb",
-        "name": "Cube Reaction (XL, 29\")",
+        "name": "Cube Reaction (AL, XL, 29\")",
         "values": {
           "reach": 440.7,
           "stack": 656,
@@ -49,7 +49,7 @@ window.BIKE_GROUPS = [
         "brand": "KTM",
         "velikost": "XL",
         "typ": "mtb",
-        "name": "KTM Myroon Comp (XL)",
+        "name": "KTM Myroon Comp (CF, XL)",
         "values": {
           "reach": 477,
           "stack": 622,
@@ -84,7 +84,7 @@ window.BIKE_GROUPS = [
         "brand": "Merida",
         "velikost": "XL",
         "typ": "mtb",
-        "name": "Merida (XL, 29\")",
+        "name": "Merida (AL, XL, 29\")",
         "values": {
           "reach": 492,
           "stack": 624,
@@ -102,7 +102,7 @@ window.BIKE_GROUPS = [
         "brand": "Specialized",
         "velikost": "XL",
         "typ": "mtb",
-        "name": "Specialized Rockhopper Expert 2014 (23.0)",
+        "name": "Specialized Rockhopper Expert 2014 (AL, 23.0)",
         "values": {
           "reach": 464,
           "stack": 672,
@@ -120,7 +120,7 @@ window.BIKE_GROUPS = [
         "brand": "Specialized",
         "velikost": "XL",
         "typ": "mtb",
-        "name": "Specialized Rockhopper Expert 1X (XL)",
+        "name": "Specialized Rockhopper Expert 1X (AL, XL)",
         "values": {
           "reach": 462,
           "stack": 633,
@@ -138,7 +138,7 @@ window.BIKE_GROUPS = [
         "brand": "Specialized",
         "velikost": "XL",
         "typ": "mtb",
-        "name": "Specialized Rockhopper Expert 29 (XL)",
+        "name": "Specialized Rockhopper Expert 29 (AL, XL)",
         "values": {
           "reach": 465,
           "stack": 640,
@@ -158,7 +158,7 @@ window.BIKE_GROUPS = [
         "brand": "Superior",
         "velikost": "XL",
         "typ": "mtb",
-        "name": "Superior XP 9.1/9.2 (XL, 21\")",
+        "name": "Superior XP 9.1/9.2 (CF, XL, 21\")",
         "values": {
           "reach": 495,
           "stack": 622,
@@ -176,7 +176,7 @@ window.BIKE_GROUPS = [
         "brand": "Superior",
         "velikost": "XL",
         "typ": "mtb",
-        "name": "Superior XP 969 Matte Black (XL, 21.0\")",
+        "name": "Superior XP 969 Matte Black (CF, XL, 21.0\")",
         "values": {
           "reach": 477,
           "stack": 620,
@@ -194,7 +194,7 @@ window.BIKE_GROUPS = [
         "brand": "Scott",
         "velikost": "XL",
         "typ": "mtb",
-        "name": "Scott Scale 50 (XL)",
+        "name": "Scott Scale 50 (AL, XL)",
         "values": {
           "reach": 492.9,
           "stack": 623.8,
@@ -212,7 +212,7 @@ window.BIKE_GROUPS = [
         "brand": "Trek",
         "velikost": "XL",
         "typ": "mtb",
-        "name": "Trek Procaliber (XL)",
+        "name": "Trek Procaliber (CF, XL)",
         "values": {
           "reach": 500,
           "stack": 642,
@@ -231,7 +231,7 @@ window.BIKE_GROUPS = [
         "brand": "Trek",
         "velikost": "XL",
         "typ": "mtb",
-        "name": "Trek Marlin (XL)",
+        "name": "Trek Marlin (AL, XL)",
         "values": {
           "reach": 495,
           "stack": 637,
@@ -254,7 +254,7 @@ window.BIKE_GROUPS = [
         "brand": "Scott",
         "velikost": "XL",
         "typ": "mtb",
-        "name": "Scott Scale RC World Cup HMX (XL, 29\")",
+        "name": "Scott Scale RC World Cup HMX (CF, XL, 29\")",
         "values": {
           "reach": 491.2,
           "stack": 628.1,
@@ -278,7 +278,7 @@ window.BIKE_GROUPS = [
         "brand": "Scott",
         "velikost": "XL",
         "typ": "mtb",
-        "name": "Scott Scale 930 (XL, 29\")",
+        "name": "Scott Scale 930 (CF, XL, 29\")",
         "values": {
           "reach": 491.2,
           "stack": 628.1,
@@ -314,7 +314,7 @@ window.BIKE_GROUPS = [
         "brand": "Lapierre",
         "velikost": "XL",
         "typ": "mtb",
-        "name": "Lapierre Prorace 4.9 (XL)",
+        "name": "Lapierre Prorace 4.9 (AL, XL)",
         "values": {
           "reach": 480,
           "stack": 616,
@@ -337,7 +337,7 @@ window.BIKE_GROUPS = [
         "brand": "Rock Machine",
         "velikost": "XL",
         "typ": "mtb",
-        "name": "Rock Machine Blizz 50 (XL, 29\")",
+        "name": "Rock Machine Blizz 50 (AL, XL, 29\")",
         "values": {
           "reach": 483,
           "stack": 652,
@@ -356,7 +356,7 @@ window.BIKE_GROUPS = [
         "brand": "Pells",
         "velikost": "XL",
         "typ": "mtb",
-        "name": "Pells Duke Elite 9 (XL, 29\")",
+        "name": "Pells Duke Elite 9 (CF, XL, 29\")",
         "values": {
           "reach": 475,
           "stack": 625,
@@ -374,7 +374,7 @@ window.BIKE_GROUPS = [
         "brand": "Pells",
         "velikost": "XL",
         "typ": "mtb",
-        "name": "Pells Duke 2 (XL, 29\")",
+        "name": "Pells Duke 2 (CF, XL, 29\")",
         "values": {
           "reach": 481,
           "stack": 631,
@@ -396,7 +396,7 @@ window.BIKE_GROUPS = [
         "brand": "Scott",
         "velikost": "XL",
         "typ": "mtb",
-        "name": "Scott Scale 940 (XL, 29\")",
+        "name": "Scott Scale 940 (CF, XL, 29\")",
         "values": {
           "reach": 492.9,
           "stack": 623.8,
@@ -446,7 +446,7 @@ window.BIKE_GROUPS = [
         "brand": "Scott",
         "velikost": "XXL",
         "typ": "mtb",
-        "name": "Scott Scale 940 (XXL, 29\")",
+        "name": "Scott Scale 940 (CF, XXL, 29\")",
         "values": {
           "reach": 512.9,
           "stack": 623.8,
@@ -465,7 +465,7 @@ window.BIKE_GROUPS = [
         "brand": "Cube",
         "velikost": "XXL",
         "typ": "mtb",
-        "name": "Cube Reaction (XXL, 29\")",
+        "name": "Cube Reaction (AL, XXL, 29\")",
         "values": {
           "reach": 456.6,
           "stack": 669.9,
@@ -503,7 +503,7 @@ window.BIKE_GROUPS = [
         "brand": "Merida",
         "velikost": "XXL",
         "typ": "mtb",
-        "name": "Merida (XXL, 29\")",
+        "name": "Merida (AL, XXL, 29\")",
         "values": {
           "reach": 512,
           "stack": 634,
@@ -521,7 +521,7 @@ window.BIKE_GROUPS = [
         "brand": "Specialized",
         "velikost": "XXL",
         "typ": "mtb",
-        "name": "Specialized Rockhopper Expert 1X (XXL)",
+        "name": "Specialized Rockhopper Expert 1X (AL, XXL)",
         "values": {
           "reach": 474,
           "stack": 633,
@@ -539,7 +539,7 @@ window.BIKE_GROUPS = [
         "brand": "Specialized",
         "velikost": "XXL",
         "typ": "mtb",
-        "name": "Specialized Rockhopper Expert 29 (XXL)",
+        "name": "Specialized Rockhopper Expert 29 (AL, XXL)",
         "values": {
           "reach": 485,
           "stack": 654,
@@ -559,7 +559,7 @@ window.BIKE_GROUPS = [
         "brand": "Scott",
         "velikost": "XXL",
         "typ": "mtb",
-        "name": "Scott Scale 50 (XXL)",
+        "name": "Scott Scale 50 (AL, XXL)",
         "values": {
           "reach": 512.9,
           "stack": 623.8,
@@ -577,7 +577,7 @@ window.BIKE_GROUPS = [
         "brand": "Trek",
         "velikost": "XXL",
         "typ": "mtb",
-        "name": "Trek Marlin (XXL)",
+        "name": "Trek Marlin (AL, XXL)",
         "values": {
           "reach": 520,
           "stack": 651,
@@ -625,7 +625,7 @@ window.BIKE_GROUPS = [
         "brand": "Duratec",
         "velikost": "XXL",
         "typ": "mtb",
-        "name": "Duratec Torain C1 (custom, 29\")",
+        "name": "Duratec Torain C1 (AL, custom, 29\")",
         "values": {
           "reach": 424,
           "stack": 684,
@@ -698,7 +698,7 @@ window.BIKE_GROUPS = [
         "brand": "Duratec",
         "velikost": "XXL",
         "typ": "silnice",
-        "name": "Duratec Rebel S8 (custom, road/cyklokros)",
+        "name": "Duratec Rebel S8 (AL, custom, road/cyklokros)",
         "values": {
           "reach": 416,
           "stack": 629,
