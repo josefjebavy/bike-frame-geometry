@@ -1,0 +1,18 @@
+# OS clutter
+.DS_Store
+Thumbs.db
+
+# Editor / IDE folders
+.idea/
+.vscode/
+
+# Local Cursor/Claude helper state
+.claude/
+
+# Backup / swap files
+*~
+*.swp
+*.swo
+
+# Logs
+*.log
