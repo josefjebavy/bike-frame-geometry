@@ -56,13 +56,7 @@ let activeId = null;
 // one of the 4 joint dots on the active frame to change it — every bike's
 // geometry is then re-based so that point sits at the same spot (instead of
 // always comparing from BB).
-const ALIGN_POINTS = {
-  bb: "BB",
-  headTop: "Hlavová trubka",
-  seatTop: "Vršek sedlovky",
-  headBottom: "Spodek hlavové trubky",
-  barEnd: "Řídítka",
-};
+const ALIGN_POINTS = I18N.t("alignPoints");
 let alignPoint = "bb";
 
 // Re-bases every point in `geo` so that `geo[refKey]` becomes (0, 0) — the
@@ -456,8 +450,8 @@ function drawSilhouette(container, proj, geo, opts) {
     if (isAlign) barRing.classList.add("bar-ring-align");
     const barTitle = el("title");
     barTitle.textContent = isAlign
-      ? `Zarovnávací bod (${ALIGN_POINTS.barEnd})`
-      : `Zarovnat všechna kola podle: ${ALIGN_POINTS.barEnd}`;
+      ? I18N.t("alignTooltipActive", ALIGN_POINTS.barEnd)
+      : I18N.t("alignTooltipClick", ALIGN_POINTS.barEnd);
     barRing.appendChild(barTitle);
     barRing.addEventListener("click", () => {
       alignPoint = "barEnd";
@@ -481,8 +475,8 @@ function drawSilhouette(container, proj, geo, opts) {
       const joint = el("circle", { class: `joint${isAlign ? " joint-align" : ""}`, cx: p.x, cy: p.y, r: 6 });
       const title = el("title");
       title.textContent = isAlign
-        ? `Zarovnávací bod (${ALIGN_POINTS[key]})`
-        : `Zarovnat všechna kola podle: ${ALIGN_POINTS[key]}`;
+        ? I18N.t("alignTooltipActive", ALIGN_POINTS[key])
+        : I18N.t("alignTooltipClick", ALIGN_POINTS[key]);
       joint.appendChild(title);
       joint.addEventListener("click", () => {
         alignPoint = key;
@@ -491,13 +485,13 @@ function drawSilhouette(container, proj, geo, opts) {
       g.appendChild(joint);
     }
 
-    g.appendChild(label(bbPx.x - 10, bbPx.y + 20, "BB", "middle"));
-    g.appendChild(label(headPx.x + 8, headPx.y - 10, "Hlavová trubka"));
-    g.appendChild(label(seatTopPx.x - 8, seatTopPx.y - 10, "Vršek sedlovky", "end"));
-    g.appendChild(label(rearAxlePx.x, rearAxlePx.y + wheelRPx + 16, "Zadní kolo", "middle"));
-    g.appendChild(label(frontAxlePx.x, frontAxlePx.y + wheelRPx + 16, "Přední kolo", "middle"));
-    g.appendChild(label(saddleCenterPx.x, saddleCenterPx.y - 12, "Sedlo", "middle"));
-    g.appendChild(label(barEndPx.x + 12, barEndPx.y - 6, "Řídítka"));
+    g.appendChild(label(bbPx.x - 10, bbPx.y + 20, ALIGN_POINTS.bb, "middle"));
+    g.appendChild(label(headPx.x + 8, headPx.y - 10, ALIGN_POINTS.headTop));
+    g.appendChild(label(seatTopPx.x - 8, seatTopPx.y - 10, ALIGN_POINTS.seatTop, "end"));
+    g.appendChild(label(rearAxlePx.x, rearAxlePx.y + wheelRPx + 16, I18N.t("labelRearWheel"), "middle"));
+    g.appendChild(label(frontAxlePx.x, frontAxlePx.y + wheelRPx + 16, I18N.t("labelFrontWheel"), "middle"));
+    g.appendChild(label(saddleCenterPx.x, saddleCenterPx.y - 12, I18N.t("labelSaddle"), "middle"));
+    g.appendChild(label(barEndPx.x + 12, barEndPx.y - 6, ALIGN_POINTS.barEnd));
 
     const dimGroup = el("g");
     const reachVal = Math.round(geo.headTop.x - geo.bb.x);
@@ -507,22 +501,22 @@ function drawSilhouette(container, proj, geo, opts) {
     const topTubeRealVal = Math.round(geo.topTubeRealLen);
 
     const reachY = Math.max(bbPx.y, headPx.y) + 30;
-    dimLineH(dimGroup, bbPx.x, headPx.x, reachY, `Reach ${reachVal} mm`);
+    dimLineH(dimGroup, bbPx.x, headPx.x, reachY, I18N.t("dimReach", reachVal));
 
     const stackX = Math.min(bbPx.x, headPx.x) - 30;
-    dimLineV(dimGroup, bbPx.y, headPx.y, stackX, `Stack ${stackVal} mm`);
+    dimLineV(dimGroup, bbPx.y, headPx.y, stackX, I18N.t("dimStack", stackVal));
 
     const ettY = Math.min(ettPx.y, headPx.y) - 20;
-    dimLineH(dimGroup, ettPx.x, headPx.x, ettY, `ETT ${ettVal} mm`);
+    dimLineH(dimGroup, ettPx.x, headPx.x, ettY, I18N.t("dimEtt", ettVal));
 
-    dimLineBetween(dimGroup, saddleCenterPx, barEndPx, `Sedlo–řídítka ${Math.round(geo.saddleToBar)} mm`);
-    dimLineBetween(dimGroup, bbPx, seatTopPx, `Sedlová trubka ${seatTubeVal} mm`, 60, { x: -1, y: 0 });
-    dimLineBetween(dimGroup, headPx, seatTopPx, `Horní trubka (skut.) ${topTubeRealVal} mm`, 22);
+    dimLineBetween(dimGroup, saddleCenterPx, barEndPx, I18N.t("dimSaddleToBar", Math.round(geo.saddleToBar)));
+    dimLineBetween(dimGroup, bbPx, seatTopPx, I18N.t("dimSeatTube", seatTubeVal), 60, { x: -1, y: 0 });
+    dimLineBetween(dimGroup, headPx, seatTopPx, I18N.t("dimTopTubeReal", topTubeRealVal), 22);
 
     const spacerVal = Math.round(Math.hypot(geo.steererTop.x - geo.headTop.x, geo.steererTop.y - geo.headTop.y));
     if (spacerVal > 0) {
-      g.appendChild(label(steererTopPx.x + 8, steererTopPx.y, "Podložky", "start"));
-      dimLineBetween(dimGroup, headPx, steererTopPx, `Podložky ${spacerVal} mm`, 16);
+      g.appendChild(label(steererTopPx.x + 8, steererTopPx.y, I18N.t("labelSpacers"), "start"));
+      dimLineBetween(dimGroup, headPx, steererTopPx, I18N.t("dimSpacers", spacerVal), 16);
     }
 
     g.appendChild(dimGroup);
@@ -597,7 +591,7 @@ function drawNameTag(container, proj, geo, opts) {
 function normalizeBikeRecord(b) {
   return {
     id: (b && b.id) || uid(),
-    name: (b && b.name) || "Kolo",
+    name: (b && b.name) || I18N.t("defaultBikeName"),
     brand: (b && b.brand) || "",
     velikost: (b && b.velikost) || "",
     typ: (b && b.typ) || "",
@@ -679,7 +673,7 @@ function renderBikeList() {
   bikeListEl.innerHTML = "";
 
   if (bikes.length === 0) {
-    bikeListEl.appendChild(h("li", { class: "bike-list-empty" }, ["Zatím žádné kolo — přidej nové nebo načti datový soubor (Import JSON)."]));
+    bikeListEl.appendChild(h("li", { class: "bike-list-empty" }, [I18N.t("bikeListEmpty")]));
     return;
   }
 
@@ -704,15 +698,15 @@ function renderBikeList() {
       [bike.name]
     );
 
-    const renameBtn = iconBtn("Přejmenovat", "✎", () => {
-      const next = window.prompt("Název kola", bike.name);
+    const renameBtn = iconBtn(I18N.t("renameTitle"), "✎", () => {
+      const next = window.prompt(I18N.t("renamePrompt"), bike.name);
       if (next && next.trim()) {
         bike.name = next.trim();
         commit();
       }
     });
 
-    const deleteBtn = iconBtn("Smazat", "×", () => {
+    const deleteBtn = iconBtn(I18N.t("deleteTitle"), "×", () => {
       bikes = bikes.filter((b) => b.id !== bike.id);
       if (activeId === bike.id) activeId = bikes[0] ? bikes[0].id : null;
       commitBikeSwitch();
@@ -727,7 +721,7 @@ addBikeBtn.addEventListener("click", () => {
   const id = uid();
   bikes.push({
     id,
-    name: `Kolo ${bikes.length + 1}`,
+    name: I18N.t("newBikeName", bikes.length + 1),
     brand: base ? base.brand : "",
     velikost: base ? base.velikost : "",
     typ: base ? base.typ : "",
@@ -739,7 +733,7 @@ addBikeBtn.addEventListener("click", () => {
 
 resetBikesBtn.addEventListener("click", () => {
   if (bikes.length === 0) return;
-  if (!window.confirm("Smazat všechna kola ze seznamu?")) return;
+  if (!window.confirm(I18N.t("confirmResetBikes"))) return;
   bikes = [];
   activeId = null;
   commitBikeSwitch();
@@ -763,7 +757,7 @@ exportBikesBtn.addEventListener("click", () => {
 function mergeImportedBikes(parsed) {
   const importedRaw = Array.isArray(parsed) ? parsed : Array.isArray(parsed.bikes) ? parsed.bikes : null;
   if (!importedRaw || !importedRaw.length) throw new Error("no bikes in data");
-  const imported = importedRaw.map((b) => normalizeBikeRecord({ ...b, name: (b && b.name) || "Importované kolo" }));
+  const imported = importedRaw.map((b) => normalizeBikeRecord({ ...b, name: (b && b.name) || I18N.t("importedBikeName") }));
   bikes = bikes.concat(imported);
   activeId = imported[0].id;
   commitBikeSwitch();
@@ -778,7 +772,7 @@ importBikesInput.addEventListener("change", (e) => {
     try {
       mergeImportedBikes(JSON.parse(reader.result));
     } catch (err) {
-      window.alert("Soubor se nepodařilo načíst jako platný JSON export kol.");
+      window.alert(I18N.t("invalidJsonAlert"));
     }
     e.target.value = "";
   };
@@ -815,24 +809,24 @@ function updateDataFilesAddedState() {
 }
 
 function renderDataFileGroup(group) {
-  const label = group.label || "Kola";
+  const label = group.label || I18N.t("catalogDefaultLabel");
   const groupBikes = (Array.isArray(group.bikes) ? group.bikes : [])
     .slice()
-    .sort((a, b) => ((a && a.name) || "").localeCompare((b && b.name) || "", "cs"));
+    .sort((a, b) => ((a && a.name) || "").localeCompare((b && b.name) || "", I18N.lang));
   let expanded = false;
 
   const bikesList = h("ul", { class: "data-file-bikes", hidden: true });
   if (!groupBikes.length) {
-    bikesList.appendChild(h("li", { class: "data-file-bike-empty" }, ["(žádná kola v této kategorii)"]));
+    bikesList.appendChild(h("li", { class: "data-file-bike-empty" }, [I18N.t("catalogEmptyGroup")]));
   } else {
     groupBikes.forEach((bikeRaw) => {
-      const name = (bikeRaw && bikeRaw.name) || "Kolo";
+      const name = (bikeRaw && bikeRaw.name) || I18N.t("defaultBikeName");
       const nameBtn = h(
         "button",
         {
           type: "button",
           class: "data-file-bike-name",
-          title: `Přidat „${name}“`,
+          title: I18N.t("catalogAddTitle", name),
           onclick: () => {
             const ids = mergeImportedBikes([bikeRaw]);
             trackCatalogAdd(bikeRaw, ids);
@@ -866,7 +860,7 @@ function renderDataFileGroup(group) {
     {
       type: "button",
       class: "data-file-group-add",
-      title: `Přidat všechna kola ze skupiny „${label}“`,
+      title: I18N.t("catalogAddAllTitle", label),
       disabled: groupBikes.length === 0,
       onclick: () => {
         const ids = mergeImportedBikes(groupBikes);
@@ -874,7 +868,7 @@ function renderDataFileGroup(group) {
         updateDataFilesAddedState();
       },
     },
-    [`+ Přidat vše (${groupBikes.length})`]
+    [I18N.t("catalogAddAllText", groupBikes.length)]
   );
 
   const header = h("div", { class: "data-file-group-header" }, [toggleBtn, addAllBtn]);

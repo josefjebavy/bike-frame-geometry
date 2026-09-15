@@ -61,14 +61,44 @@ body {
 
 header h1 {
   font-size: 1.5rem;
-  margin: 0 0 4px;
+  margin: 0;
 }
 
 .subtitle {
   color: var(--muted);
-  margin: 0 0 20px;
+  margin: 4px 0 20px;
   font-size: 0.95rem;
 }
+
+.header-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.lang-switch {
+  display: flex;
+  flex: none;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.lang-btn {
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--muted);
+  background: var(--panel-bg);
+  border: none;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+.lang-btn + .lang-btn { border-left: 1px solid var(--border); }
+.lang-btn:hover { color: var(--text); }
+.lang-btn.active { background: var(--accent); color: #fff; }
 
 main {
   display: flex;

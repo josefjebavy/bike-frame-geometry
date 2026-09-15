@@ -9,13 +9,19 @@
 <body>
   <div class="app">
     <header>
-      <h1>Bike Frame Compare</h1>
-      <p class="subtitle">Zadej klíčové rozměry a app vykreslí hlavní trojúhelník rámu i orientační siluetu celého kola. Můžeš mít zadaných víc kol najednou a porovnávat je přes sebe.</p>
+      <div class="header-title-row">
+        <h1>Bike Frame Compare</h1>
+        <div class="lang-switch" id="lang-switch" role="group" aria-label="Language">
+          <button type="button" class="lang-btn" data-lang="cs" title="Čeština">CS</button>
+          <button type="button" class="lang-btn" data-lang="en" title="English">EN</button>
+        </div>
+      </div>
+      <p class="subtitle" data-i18n="subtitle">Zadej klíčové rozměry a app vykreslí hlavní trojúhelník rámu i orientační siluetu celého kola. Můžeš mít zadaných víc kol najednou a porovnávat je přes sebe.</p>
     </header>
 
     <main>
       <section class="panel bikes-panel">
-        <h2>Kola</h2>
+        <h2 data-i18n="bikesHeading">Kola</h2>
         <ul id="bike-list" class="bike-list"></ul>
       </section>
 
@@ -24,30 +30,30 @@
       </section>
 
       <p class="align-hint">
-        Kola jsou zarovnaná podle bodu: <strong id="align-hint-label">BB</strong> —
-        klikni na kterýkoli z bodů na aktivním rámu (BB, hlavová trubka,
+        <span data-i18n="alignHintPrefix">Kola jsou zarovnaná podle bodu:</span> <strong id="align-hint-label">BB</strong> —
+        <span data-i18n="alignHintSuffix">klikni na kterýkoli z bodů na aktivním rámu (BB, hlavová trubka,
         vršek sedlovky, spodek hlavové trubky, řídítka), podle kterého se
-        mají všechna kola srovnat.
-        <button type="button" id="align-reset" class="btn-mini" disabled>Zpět na BB</button>
+        mají všechna kola srovnat.</span>
+        <button type="button" id="align-reset" class="btn-mini" data-i18n="alignReset" disabled>Zpět na BB</button>
       </p>
 
       <section class="panel bikes-import-panel">
         <div class="bike-actions-row">
-          <button type="button" id="add-bike" class="btn-secondary">+ Přidat kolo</button>
-          <button type="button" id="export-bikes" class="btn-secondary">Export JSON</button>
+          <button type="button" id="add-bike" class="btn-secondary" data-i18n="addBike">+ Přidat kolo</button>
+          <button type="button" id="export-bikes" class="btn-secondary" data-i18n="exportJson">Export JSON</button>
           <label class="btn-secondary file-label">
-            Import JSON
+            <span data-i18n="importJson">Import JSON</span>
             <input type="file" id="import-bikes" accept="application/json" hidden>
           </label>
-          <button type="button" id="reset-bikes" class="btn-secondary">Vymazat všechna kola</button>
+          <button type="button" id="reset-bikes" class="btn-secondary" data-i18n="resetBikes">Vymazat všechna kola</button>
         </div>
 
         <div id="data-files-section" hidden>
-          <h3 class="data-files-heading">Datové soubory k dispozici</h3>
+          <h3 class="data-files-heading" data-i18n="dataFilesHeading">Datové soubory k dispozici</h3>
           <ul id="data-files-list" class="data-files-list"></ul>
         </div>
 
-        <p class="note">
+        <p class="note" data-i18n="introNote">
           Appka po startu nemá žádné kolo načtené. Rozbal si kategorii výše
           a tlačítkem „+“ přidej jednotlivá kola, přidej prázdné ručně, nebo
           přes „Import JSON“ načti vlastní soubor. Aktivní kolo se kreslí
@@ -57,77 +63,77 @@
       </section>
 
       <section class="panel">
-        <h2>Rozměry (aktivní kolo)</h2>
+        <h2 data-i18n="geoHeading">Rozměry (aktivní kolo)</h2>
         <form id="geo-form">
           <label>
-            Reach (mm)
+            <span data-i18n="reachLabel">Reach (mm)</span>
             <input type="number" id="reach" step="1" value="385">
           </label>
           <label>
-            Stack (mm)
+            <span data-i18n="stackLabel">Stack (mm)</span>
             <input type="number" id="stack" step="1" value="585">
           </label>
           <label>
-            Effective Top Tube (mm)
+            <span data-i18n="ettLabel">Effective Top Tube (mm)</span>
             <input type="number" id="ett" step="1" value="565">
           </label>
           <label>
-            Skutečná délka horní trubky (mm, dopočtená ze sklonu)
+            <span data-i18n="topTubeRealLabel">Skutečná délka horní trubky (mm, dopočtená ze sklonu)</span>
             <input type="number" id="topTubeReal" step="1" readonly tabindex="-1">
           </label>
           <label>
-            Délka sedlové trubky (mm, BB–horní hrana)
+            <span data-i18n="seatTubeLabel">Délka sedlové trubky (mm, BB–horní hrana)</span>
             <input type="number" id="seatTube" step="1" value="520">
           </label>
 
           <details class="extra" open>
-            <summary>Doplňkové rozměry (orientační silueta)</summary>
+            <summary data-i18n="extraSummary">Doplňkové rozměry (orientační silueta)</summary>
             <div class="extra-grid">
               <label>
-                Rozteč zadní stavby (mm)
+                <span data-i18n="chainstayLabel">Rozteč zadní stavby (mm)</span>
                 <input type="number" id="chainstay" step="1" value="410">
               </label>
               <label>
-                Pokles středu / BB drop (mm)
+                <span data-i18n="bbDropLabel">Pokles středu / BB drop (mm)</span>
                 <input type="number" id="bbDrop" step="1" value="70">
               </label>
               <label>
-                Průměr kol (mm, 29″ ≈ 737 mm)
+                <span data-i18n="wheelDiaLabel">Průměr kol (mm, 29″ ≈ 737 mm)</span>
                 <input type="number" id="wheelDia" step="1" value="737">
               </label>
               <label>
-                Úhel hlavové trubky (°)
+                <span data-i18n="headAngleLabel">Úhel hlavové trubky (°)</span>
                 <input type="number" id="headAngle" step="0.1" value="73">
               </label>
               <label>
-                Délka hlavové trubky (mm)
+                <span data-i18n="headTubeLenLabel">Délka hlavové trubky (mm)</span>
                 <input type="number" id="headTubeLen" step="1" value="150">
               </label>
               <label>
-                Offset (rake) vidlice (mm)
+                <span data-i18n="forkRakeLabel">Offset (rake) vidlice (mm)</span>
                 <input type="number" id="forkRake" step="1" value="45">
               </label>
               <label>
-                Podložky pod představcem (mm, podél sloupku vidlice)
+                <span data-i18n="spacerHeightLabel">Podložky pod představcem (mm, podél sloupku vidlice)</span>
                 <input type="number" id="spacerHeight" step="1" value="20">
               </label>
               <label>
-                Délka představce (mm, vodorovný dosah)
+                <span data-i18n="stemLengthLabel">Délka představce (mm, vodorovný dosah)</span>
                 <input type="number" id="stemLength" step="1" value="100">
               </label>
               <label>
-                Výška představce (mm, pevná hodnota)
+                <span data-i18n="stemHeightLabel">Výška představce (mm, pevná hodnota)</span>
                 <input type="number" id="stemHeight" step="1" readonly tabindex="-1">
               </label>
               <label>
-                Výška sedla od středového složení (mm)
+                <span data-i18n="saddleHeightLabel">Výška sedla od středového složení (mm)</span>
                 <div class="field-with-action">
                   <input type="number" id="saddleHeight" step="1" value="760">
-                  <button type="button" id="saddle-height-apply-all" class="btn-mini" title="Nastaví tuhle výšku sedla u všech kol v seznamu">Pro všechny</button>
+                  <button type="button" id="saddle-height-apply-all" class="btn-mini" data-i18n="saddleApplyAllText" data-i18n-title="saddleApplyAllTitle" title="Nastaví tuhle výšku sedla u všech kol v seznamu">Pro všechny</button>
                 </div>
               </label>
               <label>
-                Posun sedla dozadu (mm)
+                <span data-i18n="saddleSetbackLabel">Posun sedla dozadu (mm)</span>
                 <input type="number" id="saddleSetback" step="1" value="0">
               </label>
             </div>
@@ -135,20 +141,20 @@
         </form>
 
         <div class="derived">
-          <h3>Odvozené hodnoty</h3>
+          <h3 data-i18n="derivedHeading">Odvozené hodnoty</h3>
           <dl>
-            <dt>Úhel sedlové trubky</dt>
+            <dt data-i18n="outSeatAngleLabel">Úhel sedlové trubky</dt>
             <dd id="out-seat-angle">–</dd>
-            <dt>Reálná délka horní trubky (hlava–sedlovka, přímka)</dt>
+            <dt data-i18n="outInfoLabel">Reálná délka horní trubky (hlava–sedlovka, přímka)</dt>
             <dd id="out-info">–</dd>
-            <dt>Rozvor (wheelbase)</dt>
+            <dt data-i18n="outWheelbaseLabel">Rozvor (wheelbase)</dt>
             <dd id="out-wheelbase">–</dd>
-            <dt>Délka vidlice, osa–koruna (dopočtená)</dt>
+            <dt data-i18n="outForkLengthLabel">Délka vidlice, osa–koruna (dopočtená)</dt>
             <dd id="out-fork-length">–</dd>
-            <dt>Sedlo–řídítka (přímá vzdálenost)</dt>
+            <dt data-i18n="outSaddleToBarLabel">Sedlo–řídítka (přímá vzdálenost)</dt>
             <dd id="out-saddle-to-bar">–</dd>
           </dl>
-          <p class="note">
+          <p class="note" data-i18n="derivedNote">
             Sedlová trubka je vedena z BB přes bod, kde ji ve výšce
             stacku protíná effective top tube; úhel sedlovky je z toho
             dopočítán, ne zadáván. Kola, vidlice, představec, řídítka
@@ -162,6 +168,7 @@
     </main>
   </div>
 
+  <script src="i18n.js"></script>
   <script src="bikes-config.js"></script>
   <script src="script.js"></script>
 </body>
