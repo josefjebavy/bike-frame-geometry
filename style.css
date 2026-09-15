@@ -119,20 +119,23 @@ main {
 }
 
 #geo-form {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px 16px;
 }
 
 label {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  min-width: 0;
   font-size: 0.85rem;
   color: var(--muted);
 }
 
 input[type="number"] {
+  width: 100%;
+  min-width: 0;
   font: inherit;
   font-size: 1rem;
   color: var(--text);
@@ -160,12 +163,14 @@ input[type="number"]:read-only {
 
 .field-with-action {
   display: flex;
+  flex-wrap: wrap;
   gap: 6px;
+  min-width: 0;
 }
 
 .field-with-action input {
-  flex: 1;
-  min-width: 0;
+  flex: 1 1 80px;
+  min-width: 60px;
 }
 
 .btn-mini {
@@ -185,6 +190,7 @@ input[type="number"]:read-only {
 .btn-mini:disabled { opacity: 0.5; cursor: not-allowed; }
 
 .extra {
+  grid-column: 1 / -1;
   margin-top: 4px;
   border-top: 1px solid var(--border);
   padding-top: 10px;
@@ -198,9 +204,9 @@ input[type="number"]:read-only {
 }
 
 .extra-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px 16px;
   margin-top: 10px;
 }
 
