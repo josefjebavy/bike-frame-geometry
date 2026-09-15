@@ -248,6 +248,30 @@ window.BIKE_GROUPS = [
           "stemLength": 80
         }
       },
+      // Source: frame/new2/SCOTT Scale 930 2026 .webp — manufacturer geometry
+      // chart, column XL. Same numbers as the Scale RC World Cup HMX chart
+      // above (shared frame platform); "BB OFFSET" (E) = -62.0mm taken as
+      // bbDrop=62; "BB CENTER TO TOP OF SEATTUBE" (I) used as seatTube. No
+      // fork rake given on this chart.
+      {
+        "brand": "Scott",
+        "velikost": "XL",
+        "typ": "mtb",
+        "name": "Scott Scale 930 (XL, 29\")",
+        "values": {
+          "reach": 491.2,
+          "stack": 628.1,
+          "ett": 656.5,
+          "seatTube": 530,
+          "chainstay": 425,
+          "bbDrop": 62,
+          "wheelDia": 737,
+          "headAngle": 67.9,
+          "headTubeLen": 120,
+          "spacerHeight": 20,
+          "stemLength": 80
+        }
+      },
       {
         "brand": "Canyon",
         "velikost": "XL",
@@ -342,12 +366,57 @@ window.BIKE_GROUPS = [
           "headTubeLen": 125,
           "spacerHeight": 20
         }
+      },
+      // Source: frame/new2/scott-scale-940-2023-model-karbon-dag-bisikleti-34676.webp
+      // (Turkish geometry chart), column XL/900. "BB OFSETİ" (E) = -60.0mm
+      // taken as bbDrop=60; "BB MERKEZİNDEN SELE BORUSUNUN ÜSTÜNE" (I) used
+      // as seatTube. No fork rake given on this chart.
+      {
+        "brand": "Scott",
+        "velikost": "XL",
+        "typ": "mtb",
+        "name": "Scott Scale 940 (XL, 29\")",
+        "values": {
+          "reach": 492.9,
+          "stack": 623.8,
+          "ett": 660,
+          "seatTube": 530,
+          "chainstay": 425,
+          "bbDrop": 60,
+          "wheelDia": 737,
+          "headAngle": 67.4,
+          "headTubeLen": 120,
+          "spacerHeight": 20,
+          "stemLength": 80
+        }
       }
     ]
   },
   {
     "label": "MTB – XXL",
     "bikes": [
+      // Source: frame/new2/scott-scale-940-2023-model-karbon-dag-bisikleti-34676.webp
+      // (Turkish geometry chart), column XXL. Same notes as the XL entry
+      // above.
+      {
+        "brand": "Scott",
+        "velikost": "XXL",
+        "typ": "mtb",
+        "name": "Scott Scale 940 (XXL, 29\")",
+        "values": {
+          "reach": 512.9,
+          "stack": 623.8,
+          "ett": 680,
+          "seatTube": 580,
+          "chainstay": 425,
+          "bbDrop": 60,
+          "wheelDia": 737,
+          "headAngle": 67.4,
+          "headTubeLen": 120,
+          "spacerHeight": 20,
+          "stemLength": 80
+        }
+      },
       {
         "brand": "Cube",
         "velikost": "XXL",
