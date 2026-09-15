@@ -29,6 +29,8 @@ jobs:
           node-version: "20"
       - name: Validate bike catalog data
         run: node scripts/validate-bikes-config.mjs
+      - name: Run geometry unit tests
+        run: node --test tests/geometry.test.mjs
       - name: Setup Pages
         uses: actions/configure-pages@v5
         with:
