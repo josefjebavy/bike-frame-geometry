@@ -79,6 +79,7 @@
       catalogAddAllTitle: (label) => `Přidat všechna kola ze skupiny „${label}“`,
       catalogAddAllText: (count) => `+ Přidat vše (${count})`,
       catalogDefaultLabel: "Kola",
+      authorLine: "Autor:",
     },
 
     en: {
@@ -157,6 +158,7 @@
       catalogAddAllTitle: (label) => `Add all bikes from group “${label}”`,
       catalogAddAllText: (count) => `+ Add all (${count})`,
       catalogDefaultLabel: "Bikes",
+      authorLine: "Author:",
     },
   };
 

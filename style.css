@@ -541,3 +541,11 @@ dd { margin: 0; font-weight: 600; text-align: right; }
 }
 .nametag-text-active { fill: var(--accent); }
 .arrow-active-fill { fill: var(--accent); }
+
+.app-footer {
+  padding: 16px 0 4px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--muted);
+}
+.app-footer a { color: var(--accent); }
